@@ -1,0 +1,921 @@
+\documentclass[10pt]{beamer}
+%\documentclass[10pt, handout]{beamer}
+\usetheme{Madrid}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage[OT1]{fontenc}
+\usepackage{amsmath}
+\usepackage[normalem]{ulem}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{multimedia}
+\usepackage{scrextend}
+\author{Мальковский Н.~В.}
+\title[Решение СЛАУ]{Решение систем линейных алгебраических уравнений}
+%\setbeamercovered{transparent} 
+\setbeamertemplate{navigation symbols}{} 
+\graphicspath{{image/}}
+%\logo{} 
+\institute[СПбАУ]{Санкт-Петербургский Академический  Университет}
+\date{} 
+\usecolortheme{beaver}
+%\subject{} 
+
+
+%\usepackage{ocgx2}
+%\usepackage{media9}%
+%\newcommand{\includemovie}[3]{%
+%\includemedia[%
+%width=#1,height=#2,%
+%activate=pagevisible,%
+%deactivate=pageclose,%
+%addresource=#3,%
+%flashvars={%
+%src=#3 % same path as in addresource!
+%&autoPlay=true % default: false; if =true, %automatically starts playback after activation (see %option ‘activation)’
+%&loop=true % if loop=true, media is played in a loop
+%&controlBarAutoHideTimeout=0 %  time span before auto-%hide
+%}%
+%]{}{StrobeMediaPlayback.swf}%
+
+\DeclareMathOperator{\argmin}{argmin}
+\DeclareMathOperator{\argmax}{argmax}
+\DeclareMathOperator{\interior}{Int}
+\DeclareMathOperator{\lin}{Span}
+\DeclareMathOperator{\llin}{Lin}
+\DeclareMathOperator{\diag}{diag}
+
+
+
+%\setbeamertemplate{theorems}[numbered]
+
+\newcounter{thm}
+\newcounter{lm}
+\newcounter{def}
+
+
+\newtheorem{theorem_ru}[thm]{Теорема}
+\newtheorem{lemma_ru}[lm]{Лемма}
+\newtheorem{corollary_ru}{Следствие}[]
+\newtheorem{definition_ru}{Определение}[def]
+
+\newcommand{\Ima}{\text{Im}}
+\newcounter{remarknumber}[framenumber]
+\newcommand{\remark}{\stepcounter{remarknumber}\textit{Замечание}~\arabic{remarknumber}}
+
+
+\begin{document}
+\begin{frame}
+\titlepage
+\centering
+\includegraphics[width=.23\textwidth]{logo.png}
+\end{frame}
+
+\begin{frame}{Матричная декомпозиция}
+\begin{definition_ru}
+\underline{Декомпозицией} или \underline{разложением} матрицы $A$ называется представление $A$ в виде некоторого произведения
+$$
+A=A_1A_2\ldots A_n
+$$
+\end{definition_ru}
+\pause
+\textit{Замечание.} Обычно $n=2, 3$, в интересующих нах случаях $A$ и $A_i$ -- квадратные матрицы.\\
+\pause
+\vspace{1em}
+\textit{Зачем нужно:} Пусть $A=A_1\ldots A_n$, дана система
+$$
+Ax=b
+$$ 
+\pause
+Если $A_1y=b$, систему $Ax=b$ можно редуцировать до системы $A_2\ldots A_nx=y$.\\
+\pause
+Таким образом, интересны разложения с небольшим $n$ и простой структурой $A_i$.
+\end{frame}
+
+\begin{frame}{Ортогональные матрицы}
+\begin{definition_ru}
+Матрица $P\in \mathbb{R}^{n\times n}$ называется \underline{ортогональной}, если $P^TP=PP^T=I$.
+\end{definition_ru}
+\pause
+\textit{Замечание} 1. Непосредственное следствие, если $P$ ортогональна, то $P^{-1}=P^T$.
+\pause 
+\vspace{1em}
+\textit{Замечание} 2. Пусть $p_1, \ldots, p_n\in K^n$ -- столбцы матрицы $P$, т.~е. $P=[p_1 \ldots p_n]$, тогда
+$$
+P^TP=\left[\begin{array}{c}
+p_1^T\\ \ldots \\ p_n^T
+\end{array}\right][p_1 \ldots p_n]=
+\left(\begin{array}{cccc}
+p_1^Tp_1 & p_1^Tp_2 & \ldots & p_1^Tp_n \\
+p_2^Tp_1 & p_2^Tp_2 & \ldots & p_2^Tp_n \\
+\vdots & \vdots & \ddots & \vdots \\
+p_n^Tp_1 & p_n^Tp_2 & \ldots & p_n^Tp_n
+\end{array}
+\right)=I
+$$
+\pause
+Таким образом 
+$$
+p_i^Tp_j=\begin{cases}
+1, & i=j\\
+0, & i\neq j
+\end{cases}
+$$
+иначе говоря, столбцы $P$ -- ортонормированы. Это свойство выполняется и для строк.
+
+\end{frame}
+
+\begin{frame}{Треугольные матрицы}
+\begin{definition_ru}
+Матрица $A=(a_{ij})\in K^{n\times n}$ называется \underline{верхней треугольной} матрицей, если $a_{ij}=0$ при $i > j$. Аналогично $A$ называется \underline{нижней треугольной}, если $a_{ij}=0$ при $i<j$.
+\end{definition_ru}
+$$
+\left(\begin{array}{cccc}
+a_{11} & a_{12} & \ldots & a_{1n} \\
+0 & a_{22} & \ldots & a_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \ldots & a_{nn}
+\end{array}
+\right)
+~~~~\left(\begin{array}{cccc}
+a_{11} & 0 & \ldots & 0 \\
+a_{21} & a_{22} & \ldots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+a_{n1} & a_{n2} & \ldots & a_{nn}
+\end{array}
+\right)
+$$
+\end{frame}
+
+\begin{frame}{Решение СЛАУ для ортогональных матриц}
+Пусть $P$ --  ортогональная матрица, рассмотрим систему
+$$Px=b$$
+\pause
+Из свойств $P$ получаем
+$$
+x=P^TPx=P^Tb
+$$
+\pause
+Фактически, свойство ортогональности можно переписать в виде $P^{-1}=P^T$.
+\end{frame}
+
+\begin{frame}{Треугольные матрицы}
+Свойства:
+\pause
+\begin{itemize}[<+->]
+\item[1.] Произведение верхних треугольных матриц есть верхняя треугольная матрица, при $i>j$
+$$
+\sum_{k=1}^na_{ik}b_{kj}=\sum_{k=1}^j\underbrace{a_{ik}}_{=0}b_{kj}+\sum_{k=j+1}^na_{ik}\underbrace{b_{kj}}_{=0}=0
+$$
+\item[2.] Пусть $A=(a_{ij})$ -- верхняя треугольная матрица с ненулевыми диагональными элементами, тогда $A^{-1}$ существует и также является верхней треугольной матрицей. Пусть $i=n$, тогда для $j<n$ имеем 
+$$
+\sum_{k=1}^na_{ik}b_{kj}=\sum_{k=1}^{n-1}\underbrace{a_{ik}}_{=0}b_{kj}+a_{nn}b_{nj}=0~\Rightarrow~b_{nj}=0
+$$
+Повторяя для $i=n-1\ldots j+1$ получаем
+$$
+\sum_{k=1}^na_{ik}b_{kj}=\sum_{k=1}^{i-1}\underbrace{a_{ik}}_{=0}b_{kj}+a_{ii}b_{ij}+\sum_{k=i+1}^{n}a_{ik}\underbrace{b_{kj}}_{=0,~\mbox{индукция}}=0~\Rightarrow~b_{ij}=0
+$$
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Треугольные матрицы}
+\begin{itemize}[<+->]
+\item[3.] Если $A$ -- верхняя треугольная, то $A-\lambda I$ тоже верхняя треугольная матрица, а её определитель легко вычисляется
+$$
+\det(A-\lambda I)=\prod_{i=1}^n(a_{ii}-\lambda)
+$$
+Таким образом, диагональные элементы $A$ являются её собственными числами с учетом кратности.
+\item[4.] Атомарная треугольная матрица -- нижняя треугольная матрица следующего вида
+$$
+\left(\begin{array}{ccccc}
+1 & 0 & 0 & \ldots & 0 \\
+0 & 1 & 0 & \ldots & 0 \\
+0 & a_{(i+1)i} & 1 & \ldots & 0 \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+0 & a_{ni} & 0 & \ldots & 1
+\end{array}\right)
+$$
+Домножение слева на такую матрицу добавляет к строке $i$ линейную комбинацию строк $i+1, \ldots, n$.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\begin{itemize}[<+->]
+\item [5.] Обратная матрица к атомарной вычисляется довольно просто
+$$
+A=\left(\begin{array}{ccccc}
+1 & 0 & 0 & \ldots & 0 \\
+0 & 1 & 0 & \ldots & 0 \\
+0 & a_{(i+1)i} & 1 & \ldots & 0 \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+0 & a_{ni} & 0 & \ldots & 1
+\end{array}\right)
+~A^{-1}=\left(\begin{array}{ccccc}
+1 & 0 & 0 & \ldots & 0 \\
+0 & 1 & 0 & \ldots & 0 \\
+0 & -a_{(i+1)i} & 1 & \ldots & 0 \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+0 & -a_{ni} & 0 & \ldots & 1
+\end{array}\right)
+$$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Решение СЛАУ для треугольных матриц}
+Пусть $L$ -- нижняя треугольная матрица, тогда система $Lx=b$ имеет вид
+$$
+\begin{array}{cccccc}
+\ell_{11}x_1 & & & &=&b_1\\
+\ell_{21}x_1 & +~\ell_{22}x_2 & & &=&b_2\\
+\vdots & ~\vdots & ~~\ddots & &=&\vdots\\
+\ell_{n1}x_1 & +~\ell_{n2}x_n &~\ldots &+~\ell_{nn}x_n &=&b_n
+\end{array}
+$$
+\pause
+Из-за особого вида системы решение легче всего получить последовательным решением уравнений в заданном порядке, что дает рекуррентные формулы
+$$
+x_i=\frac{b_i-\sum_{k=1}^{i-1}\ell_{ik}x_k}{\ell_{ii}}
+$$
+\pause
+\textit{Замечание} 1. Если все диагональные элементы ненулевые, то формулы корректны. Если же $\ell_{ii}=0$, но при этом $b_i-\sum_{k=1}^{i-1}\ell_{ik}x_k\neq 0$, то решения не существует, если же $b_i-\sum_{k=1}^{i-1}\ell_{ik}x_k$, то $x_i$ можно выбрать любое.
+\textit{Замечание} 2. Нахождение решения по этим формулам принято называть \underline{прямой подстановкой}.
+\end{frame}
+
+\begin{frame}{Решение СЛАУ для треугольных матриц}
+Пусть $L$ -- нижняя треугольная матрица, тогда система $Lx=b$ имеет вид
+$$
+\begin{array}{cccccc}
+u_{11}x_1 & +~u_{12}x_n &~\ldots &+~u_{1n}x_n &=&b_1\\
+ & ~~\ddots & \vdots &\vdots &=&\vdots\\
+  &  & u_{(n-1)(n-1)}x_{n-1}&+u_{(n-1)n}x_n&=&b_{n-1}\\
+ & & & u_{nn}x_n&=&b_n
+\end{array}
+$$
+\pause
+Эту систему решать проще в обратном порядке, по аналогии с верхней треугольной матрицей получаем следующие формулы
+$$
+x_i=\frac{b_i-\sum_{k=i+1}^{n}u_{ik}x_k}{u_{ii}}
+$$
+\pause
+\textit{Замечание}. Такой процесс принято называть \underline{обратной подстановкой}.
+\end{frame}
+
+\begin{frame}{$LU$-декомпозиция}
+\begin{definition_ru}
+$LU$-декомпозицией матрицы $A\in K^{n\times n}$ называется представление $A=LU$, где $L, U\in K^{n\times n}$, $L$ -- нижняя треугольная матрица, а $U$ -- верхняя треугольная матрица.
+\end{definition_ru}
+\pause
+\textit{Замечание.} Уравнение $Ax=b$ переписывается в виде $L^{-1}Ax=Ux=L^{-1}b$. Метод Гаусса заключается в последовательном домножении левой и правой части исходного уравнения на атомарные матрицы, что в итоге дает приведенное уравнение $Ux=L^{-1}b$.
+\end{frame}
+
+\begin{frame}{Метод Гаусса}
+Метод Гаусса заключается в последовательном вычитанием одного уравнения из других, таким образом множество решений системы не меняется. 
+\pause
+Метод делится на $n$ шагов, на шаге $k$ система имеет вид
+$$
+\left(
+\begin{array}{ccccccc}
+u^k_{11} & u^k_{12} & \ldots & u^k_{1k} & \ldots & u^k_{1n} \\
+0 & u^k_{22} & \ldots & u^k_{2k} & \ldots & u^k_{2n}\\
+\vdots & \vdots &  \ddots & \vdots & \ddots & \vdots \\
+0 & 0 & \ldots & u^k_{kk} & \ldots & u^k_{kn} \\
+\vdots & \vdots & \ddots & \vdots & \ddots & \vdots \\
+0 & 0 & \ldots & u^k_{nk} & \ldots & u^k_{nn}
+\end{array}
+\right)x
+=\left(
+\begin{array}{c}
+b^k_1\\ b^k_2 \\ \vdots \\ b^k_k \\ \vdots \\ b^k_n
+\end{array}
+\right)
+$$
+Здесь под $u^k_{ij}$ подразумевается значение соответствующего коэффициента на шаге $k$. $u^k_{ij}=0$ при выполнении двух условий:
+\begin{itemize}
+\item $i>j$
+\item $j\leq k$
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Метод Гаусса}
+Итерация $k$: вычесть промасштабированную строку $k$ из строк $k+1, \ldots, n$ так, чтобы обнулить столбец $k$.\\
+\pause
+\vspace{1em}
+Непосредственным вычислением получаем для:
+$$
+u^k_{ij}=\begin{cases}
+u^{k-1}_{ij}-\frac{u^{k-1}_{kk}}{u^{k-1}_{ik}}u_{kj}, & i > k\\
+u^{k-1}_{ij} & i \leq k
+\end{cases}
+~~b^k_i = \begin{cases}
+b^{k-1}_i-\frac{u^{k-1}_{kk}}{u^{k-1}_{ik}}b^{k-1}_k, & i > k \\
+b^{k-1}_i, & i \leq k
+\end{cases}
+$$
+\pause
+Итерация $k$ требует
+\begin{itemize}[<+->]
+\item $n-k$ делений.
+\item $(n-k)^2-1$ сложений и умножений.
+\end{itemize}
+\pause
+\textit{Замечание.} Если $A$ обратима, то все формулы корректны и $u^{k-1}_{kk}$ отлично от нуля.
+\end{frame}
+
+\begin{frame}{Пример}
+\only<1-1>{
+$$L=
+\left(\begin{array}{ccccc}1 & 0 & 0 & 0 & 0\\0 & 1 & 0 & 0 & 0\\0 & 0 & 1 & 0 & 0\\0 & 0 & 0 & 1 & 0\\0 & 0 & 0 & 0 & 1\\\end{array}\right)
+U=
+\left(\begin{array}{ccccc}2 & 3 & -2 & -1 & 0\\-2 & -2 & 4 & 4 & 1\\-4 & -7 & 0 & -1 & -1\\2 & 5 & 0 & 6 & 1\\-2 & -5 & -4 & -4 & 0\\\end{array}\right)
+$$
+}
+\only<2-2>{
+$$
+\left(\begin{array}{ccccc}1 & 0 & 0 & 0 & 0\\-1 & 1 & 0 & 0 & 0\\-2 & 0 & 1 & 0 & 0\\1 & 0 & 0 & 1 & 0\\-1 & 0 & 0 & 0 & 1\\\end{array}\right)
+\left(\begin{array}{ccccc}2 & 3 & -2 & -1 & 0\\0 & 1 & 2 & 3 & 1\\0 & -1 & -4 & -3 & -1\\0 & 2 & 2 & 7 & 1\\0 & -2 & -6 & -5 & 0\\\end{array}\right)
+$$
+$$A=
+\left(\begin{array}{ccccc}2 & 3 & -2 & -1 & 0\\-2 & -2 & 4 & 4 & 1\\-4 & -7 & 0 & -1 & -1\\2 & 5 & 0 & 6 & 1\\-2 & -5 & -4 & -4 & 0\\\end{array}\right)
+L_i=
+\left(\begin{array}{ccccc}1 & 0 & 0 & 0 & 0\\-1 & 1 & 0 & 0 & 0\\-2 & 0 & 1 & 0 & 0\\1 & 0 & 0 & 1 & 0\\-1 & 0 & 0 & 0 & 1\\\end{array}\right)
+$$
+}
+\only<3-3>{
+$$
+\left(\begin{array}{ccccc}1 & 0 & 0 & 0 & 0\\-1 & 1 & 0 & 0 & 0\\-2 & -1 & 1 & 0 & 0\\1 & 2 & 0 & 1 & 0\\-1 & -2 & 0 & 0 & 1\\\end{array}\right)
+\left(\begin{array}{ccccc}2 & 3 & -2 & -1 & 0\\0 & 1 & 2 & 3 & 1\\0 & 0 & -2 & 0 & 0\\0 & 0 & -2 & 1 & -1\\0 & 0 & -2 & 1 & 2\\\end{array}\right)
+$$
+$$A=
+\left(\begin{array}{ccccc}2 & 3 & -2 & -1 & 0\\-2 & -2 & 4 & 4 & 1\\-4 & -7 & 0 & -1 & -1\\2 & 5 & 0 & 6 & 1\\-2 & -5 & -4 & -4 & 0\\\end{array}\right)
+L_i=
+\left(\begin{array}{ccccc}1 & 0 & 0 & 0 & 0\\0 & 1 & 0 & 0 & 0\\0 & -1 & 1 & 0 & 0\\0 & 2 & 0 & 1 & 0\\0 & -2 & 0 & 0 & 1\\\end{array}\right)
+$$
+}
+\only<4-4>{
+$$
+\left(\begin{array}{ccccc}1 & 0 & 0 & 0 & 0\\-1 & 1 & 0 & 0 & 0\\-2 & -1 & 1 & 0 & 0\\1 & 2 & 1 & 1 & 0\\-1 & -2 & 1 & 0 & 1\\\end{array}\right)
+\left(\begin{array}{ccccc}2 & 3 & -2 & -1 & 0\\0 & 1 & 2 & 3 & 1\\0 & 0 & -2 & 0 & 0\\0 & 0 & 0 & 1 & -1\\0 & 0 & 0 & 1 & 2\\\end{array}\right)
+$$
+$$A=
+\left(\begin{array}{ccccc}2 & 3 & -2 & -1 & 0\\-2 & -2 & 4 & 4 & 1\\-4 & -7 & 0 & -1 & -1\\2 & 5 & 0 & 6 & 1\\-2 & -5 & -4 & -4 & 0\\\end{array}\right)
+L_i=
+\left(\begin{array}{ccccc}1 & 0 & 0 & 0 & 0\\0 & 1 & 0 & 0 & 0\\0 & 0 & 1 & 0 & 0\\0 & 0 & 1 & 1 & 0\\0 & 0 & 1 & 0 & 1\\\end{array}\right)
+$$
+}
+\only<5-5>{
+$$
+\left(\begin{array}{ccccc}1 & 0 & 0 & 0 & 0\\-1 & 1 & 0 & 0 & 0\\-2 & -1 & 1 & 0 & 0\\1 & 2 & 1 & 1 & 0\\-1 & -2 & 1 & 1 & 1\\\end{array}\right)
+\left(\begin{array}{ccccc}2 & 3 & -2 & -1 & 0\\0 & 1 & 2 & 3 & 1\\0 & 0 & -2 & 0 & 0\\0 & 0 & 0 & 1 & -1\\0 & 0 & 0 & 0 & 3\\\end{array}\right)
+$$
+$$A=
+\left(\begin{array}{ccccc}2 & 3 & -2 & -1 & 0\\-2 & -2 & 4 & 4 & 1\\-4 & -7 & 0 & -1 & -1\\2 & 5 & 0 & 6 & 1\\-2 & -5 & -4 & -4 & 0\\\end{array}\right)
+L_i=
+\left(\begin{array}{ccccc}1 & 0 & 0 & 0 & 0\\0 & 1 & 0 & 0 & 0\\0 & 0 & 1 & 0 & 0\\0 & 0 & 0 & 1 & 0\\0 & 0 & 0 & 1 & 1\\\end{array}\right)
+$$
+}
+\end{frame}
+
+
+\begin{frame}{Рекурсивная форма метода Гаусса}
+Пусть $A\in K^{n\times n}$, $\ell\in K^{n-1
+}$, $u\in K^{n-1}$, $\tilde{A}\in K^{n-1\times n-1}$ и при этом
+$$
+A=\left[\begin{array}{cc}
+a_{11} & u^T \\
+\ell & \tilde{A}
+\end{array}
+\right]
+$$
+\pause
+Обозначим за $GU(A)$, $GL(A)$ -- верхнюю и нижнюю треугольную матрицу, получающуюся в результате применения метода Гаусса к матрице $A$, тогда имеют место соотношения
+$$
+GU(A)=\left[\begin{array}{cc}
+a_{11} & u^T \\
+0 & GU(\tilde{A}-\frac{1}{a_{11}}\ell u^T)
+\end{array}
+\right]
+$$
+и
+$$
+GL(A)=\left[\begin{array}{cc}
+1 & 0_{n-1}^T \\
+-\frac{1}{a_{11}}\ell & I_{n-1}
+\end{array}
+\right]
+\left[\begin{array}{cc}
+1 & 0^T_{n-1} \\
+0_{n-1} & GL(\tilde{A}-\frac{1}{a_{11}}\ell u^T)
+\end{array}\right]
+$$
+\end{frame}
+
+\begin{frame}{Разложение Холеского}
+\begin{definition_ru}
+Разложением \textit{Холеского} называется представление квадратной матрицы в виде $A=LL^T$, где $L$ -- нижняя треугольная матрица.
+\end{definition_ru}
+\pause
+\begin{theorem_ru}
+Для квадратной матрицы $A$ разложение Холеского существует, если она симметрична и положительно определена, и не существует, если не симметрична или не положительно полуопределена.
+\end{theorem_ru}
+\pause
+\textbf{Док-во.} Необходимость: легко увидеть, что матрица $LL^T$ всегда симметрична и положительно определена
+$$
+x^TLL^Tx=(L^Tx)^TL^Tx=||L^Tx||^2\geq 0
+$$
+\end{frame}
+
+\begin{frame}{Разложение Холеского}
+Достаточность: пусть $A$ -- симметричная положительно определенная матрица и пусть, $A=LU$, где $L$ -- обратимая нижняя треугольная матрица, а $U$ -- верхняя треугольная матрица (существует в следствии метода Гаусса), тогда
+$$
+A=A^T=LU=U^TL^T
+$$
+\pause
+$$
+U(L^T)^{-1}=L^{-1}U^T.
+$$
+\pause
+В левой части последнего равенства находится произведение верхних треугольных матриц, в правой -- произведение нижних треугольных матриц. Равенство возможно только в том случае, когда в обоих частях диагональные матрицы. \\
+\pause
+\vspace{1em}
+Обозначим $D=\diag\{d_1, \ldots, d_n\}=U(L^T)^{-1}$, тогда
+$$
+A=LDL^T
+$$
+\pause
+В силу обратимости $L$ и положительной определенности $A$ получаем положительную определенность $D$, т.~е. $d_i\geq 0$, отсюда $A=L\sqrt{D}(L\sqrt{D})^T$, где $\sqrt{D}=\diag\{\sqrt{d_1}, \ldots, \sqrt{d_n}\}$.
+
+\end{frame}
+
+\begin{frame}{Разложение Холеского}
+\textit{Замечание} 1. Если матрица $A$ строго положительно определена, то разложение Холеского единственно.\\
+\pause
+Расписывая равенство 
+$$
+LL^T=A
+$$
+покоординатно получаем получаем для $i\geq j$
+$$
+a_{ij}=\sum_{k=1}^n\ell_{ik}\ell_{jk}=\sum_{k=1}^{j}\ell_{ik}\ell_{jk}
+$$
+\pause
+Из этих равенств можно получаем следующие рекуррентные формулы 
+\begin{align}\label{cholesky}
+&\ell_{ii}=\pm\sqrt{a_{ii}-\sum_{j=1}^{i-1}\ell_{ij}^2}\nonumber\\
+&\ell_{ij}=\frac{1}{\ell_{jj}}\left(a_{ij}-\sum_{k=1}^{j-1}\ell_{ik}\ell_{jk}\right),~~j<i
+\end{align}
+
+\end{frame}
+
+\begin{frame}{Разложение Холеского}
+Если $A$ положительно определена, то выражение под корнем всегда положительно, так как система должна иметь решение. В случае, если $\ell_{jj}=0$, то $\ell_{ij}$ может быть выбрано произвольно.\\
+\pause
+\vspace{1em}
+Предположим, что $0$ является собственным числом $L$, тогда $0=L^Tv=LL^Tv=Av$. Пусть теперь $0$ является собтвенным числом $A$, $Av=0$, тогда 
+$$
+0=v^TAv=v^TLL^Tv=||L^Tv||^2~~\Rightarrow L^Tv=0
+$$
+\pause
+Таким образом $L$ содержит собственное число $0$ тогда и только тогда когда $A$ содержит с.~ч. $0$. Следовательно для строго положительно определенной $A$ формулы \eqref{cholesky} задают единственную матрицу $L$ с точностью до знака перед корнем. Итого имеем следующую теорему единственности
+\pause
+\begin{theorem_ru}
+Для положительно определенной матрицы $A$ существует единственная положительно определенная нижняя треугольная матрица $L$ такая, что $A=LL^T$.
+\end{theorem_ru}
+\end{frame}
+
+\begin{frame}{Рекурсивная форма разложения Холеского}
+Пусть $A\in K^{n\times n}$ -- симметричная строго положительно определенная матрица, $\ell\in K^{n-1
+}$, $\tilde{A}\in K^{n-1\times n-1}$ и при этом
+$$
+A=\left[\begin{array}{cc}
+a_{11} & \ell^T \\
+\ell & \tilde{A}
+\end{array}
+\right]
+$$
+\pause
+Отметим, что имеет место равенство
+$$
+\left[\begin{array}{cc}
+a_{11} & \ell^T \\
+\ell & \tilde{A}
+\end{array}
+\right]
+=
+\left[\begin{array}{cc}
+\sqrt{a_{11}} & 0^T_{n-1} \\
+\frac{1}{\sqrt{a_{11}}}\ell & I_{n-1}
+\end{array}
+\right]
+\left[\begin{array}{cc}
+1 & 0_{n-1}^T \\
+0_{n-1} & \tilde{A}-\frac{1}{a_{11}}\ell\ell^T
+\end{array}
+\right]
+\left[\begin{array}{cc}
+\sqrt{a_{11}} & \frac{1}{\sqrt{a_{11}}}\ell^T \\
+0_{n-1} & I_{n-1}
+\end{array}
+\right]
+$$
+\pause
+Таким образом, обозначив за $HL(A)$ -- единственную матрицу $L$, что $A=LL^T$ и используя факт, что при $B=RR^T$ выполняется
+$$
+\left[\begin{array}{cc}
+I & 0 \\
+0 & B
+\end{array}
+\right]
+=
+\left[\begin{array}{cc}
+I & 0 \\
+0 & R
+\end{array}
+\right]
+\left[\begin{array}{cc}
+I & 0 \\
+0 & R^T
+\end{array}
+\right]
+$$
+\pause
+получаем
+$$
+HL(A)=\left[\begin{array}{cc}
+\sqrt{a_{11}} & 0^T_{n-1} \\
+\frac{1}{\sqrt{a_{11}}}\ell & HL(\tilde{A}-\frac{1}{a_{11}}\ell u^T)
+\end{array}
+\right]
+$$
+
+\end{frame}
+
+\begin{frame}{Итеративные схемы}
+Рассмотрим снова СЛАУ 
+$$
+Ax=b.
+$$
+\pause
+Если $D$ -- обратимая матрица, то система может быть эквивалентна переписана в виде
+$$
+x=x-D(Ax-b)=(I-DA)x+Db
+$$
+\pause
+Общая \underline{итеративная схема решения СЛАУ} заключается в построении последовательности
+\begin{equation}\label{iterative_scheme}
+x_{k+1}=(I-DA)x_k+Db
+\end{equation}
+\pause
+\begin{theorem_ru}
+Если матрица $I-DA$ положительно определена, $\sigma(I-DA)<1$ и $D$ обратима, то \eqref{iterative_scheme} сходится к сходится решению системы $Ax=b$.
+\end{theorem_ru}
+\textbf{Док-во.} Сходимость и скорость сходимости была показана раньше (сходимость линейных итеративных процессов). Пусть $x_k\rightarrow x^*$, тогда $x^*=x^*-D(Ax^*-b)$, т.~е. $D(Ax^*-b)=0$, из обратимости $D$ следует $Ax^*=b$.~~$\blacksquare$
+\end{frame}
+
+\begin{frame}{Два способа построения итеративных схем}
+Основная проблема обычно заключается в том, чтобы подобрать $D$ так, что $\sigma(I-DA)<1$. Два наиболее распространенных случая:
+\begin{itemize}[<+->]
+\item[1.] $0\preceq A\preceq \gamma I$, тогда годится выбор $D=\gamma^{-1}I$. Для симметричной матрицы $A$ этот метод идентичен применению градиентного спуска к функции
+$$
+f(x)=\frac{1}{2}x^TAx-b^Tx+c
+$$
+\item[2.] $A$ имеет \underline{диагональное преобладание}, т.~е.
+$$
+|a_{ii}|\geq\sum_{j\neq i}|a_{ij}|.
+$$	
+В этом случае годится выбор $D=\diag\{a_{11}^{-1}, \ldots, a_{nn}^{-1}\}$. Этот метод принято называть \textit{методом Якоби}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Теорема Гершгорина}
+\begin{theorem_ru}[Гершгорина о кругах]
+Пусть $A=(a_{ij})\in \mathbb{C}^{n\times n}$. Для любого собственного числа $\lambda$ матрицы $A$ найдется $1\leq i\leq n$ такое, что
+$$
+|\lambda-a_{ii}|\leq \sum_{j\neq i}|a_{ij}|
+$$
+\end{theorem_ru}
+\pause
+\textbf{Док-во.} Пусть $Ax=\lambda x$ и $i=\argmax_j|x_j|$. Таким образом
+$$
+\sum_{j}a_{ij}x_j=\lambda x_i
+$$
+Поделив обе части на $x_i$ получаем
+$$
+\sum_{j\neq i}a_{ij}\frac{x_j}{x_i}+a_{ii}=\lambda
+$$
+\pause
+Таким образом
+$$
+|\lambda-a_{ii}|=\left|\sum_{j\neq i}a_{ij}\frac{x_j}{x_i}\right|\leq \sum_{j\neq i}|a_{ij}|~~\blacksquare
+$$
+\end{frame}
+
+\begin{frame}{Теорема Гершгорина}
+\textit{Замечание} 1. Вещественная часть любого собственного числа вещественной матрицы с диагональным преобладанием и строго положительными диагональными элементами неотрицательна.\\
+\pause
+\vspace{1em}
+\textit{Замечание} 2. В методе Якоби выполняется $0\preceq (I-DA)\preceq I$.
+\end{frame}
+
+\begin{frame}{Метод сопряженных направлений}
+\begin{definition_ru}
+Пусть $A$ -- симметричная матрица. Вектора $u, v$ называются \underline{$A$-ортогональными} или \underline{сопряженными}, если
+$$
+u^TAv=0
+$$
+\end{definition_ru}
+\pause
+Рассмотрим задачу минимизации
+$$
+f(x)=\frac{1}{2}x^TAx-b^Tx+c,
+$$
+где $A$ -- симметричная обратимая матрица, таким образом $\nabla f(x)=Ax-b$, а значит нахождение точки минимума $f$ равносильно решению системы $Ax=b$. Обозначим за $x^*$ единственную точку минимума $f$.\\
+\end{frame}
+
+\begin{frame}{Метод сопряженных направлений}
+Предположим, что нам известны $n$ попарно сопряженных направлений $d_0, \ldots, d_{n-1}$. Выберем произвольную точку $x_0$ и сделаем по очереди $n$ шагов градиентного спуска по каждому из направлений, выбирая размер шага как минимум по направлению.
+$$
+x_{k+1}=x_k-\alpha_kd_k
+$$
+\pause
+Получаем $\alpha_k$ из уравнения $\frac{d}{d\alpha}f(x_k-\alpha d_k)=0$:
+$$
+0=\frac{d}{d\alpha}f(x_k-\alpha d_k)=-d_k^T(A(x_k-\alpha d_k)-b)=\alpha d^T_kAd^T_k-d_k^T(Ax_k-b)
+$$
+\pause
+$$
+\alpha_k=\frac{d_k^T(Ax_k-b)}{d^T_kAd_k}
+$$
+\end{frame}
+
+\begin{frame}{Метод сопряженных направлений}
+Теперь предположим, что $(d_0, \ldots, d_{n-1})$ -- базис в $\mathbb{R}^n$, тогда
+
+$$
+x_0-x^*=\sum_{i=0}^{n-1}\delta_id_i
+$$
+\pause 
+Умножая это равенство на $d_k^TA$ получаем
+$$
+d_k^TA(x_0-x^*)=\sum_{i=0}^{n-1}\delta_id_k^TAd_i=\delta_kd_k^TAd_k
+$$
+и получаем следующие равенства для $\delta$
+\begin{align*}
+\delta_k&=\frac{d^T_kA(x_0-x^*)}{d_k^TAd_k}\\
+&=\frac{d^T_kA(x_0-x^*-\sum_{i=0}^{k-1}\alpha_id_i)}{d_k^TAd_k}=\frac{d^T_kA(x_k-x^*)}{d_k^TAd_k}=\alpha_k
+\end{align*}
+\end{frame}
+
+\begin{frame}{Метод сопряженных направлений}
+Таким образом получаем
+$$
+x_k-x^*=x_0-\sum_{i=0}^{k-1}\alpha_id_i-x^*=\sum_{i=0}^{n-1}\alpha_id_i-\sum_{i=0}^{k-1}\alpha_id_i=\sum_{i=k}^{n-1}\alpha_id_i,
+$$
+что гарантирует сходимость этой процедуры за $n$ шагов. \pause Более того,
+$$
+||x_k-x^*||^2_A=(x_k-x^*)^TA(x_k-x^*)=\sum_{i=k}^{n-1}\sum_{j=k}^{n-1}\alpha_i\alpha_jd_i^TAd_j=\sum_{i=k}^{n-1}\alpha_i^2d_i^TAd_i
+$$
+Пусть $x\in x_0+\lin\{d_0, \ldots, d_{k-1}\}$, $x=x_0+\sum_{i=0}^{k-1}\beta_id_i$, тогда
+\begin{align*}
+||x-x^*||^2_A&=\left(\sum_{i=0}^{k-1}\beta_id_i+\sum_{i=0}^{n-1}\alpha_id_i\right)^TA\left(\sum_{i=0}^{k-1}\beta_id_i+\sum_{i=0}^{n-1}\alpha_id_i\right)\\
+&=\sum_{i=0}^{k-1}(\beta_i+\alpha_i)^2d_i^TAd_i+\sum_{i=k}^{n-1}\alpha_i^2d_i^TAd_i\geq ||x_k-x^*||^2_A
+\end{align*}
+\end{frame}
+
+\begin{frame}{Метод сопряженных направлений}
+Важное свойство метода сопряженных направлений:
+$$
+x_k=\argmin_{x\in x_0+\lin\{d_0, \ldots, d_{k-1}\}}||x-x^*||_A
+$$
+\pause
+\vspace{1em}
+Остается вопрос: как найти $d_0, \ldots, d_{n-1}$?
+\end{frame}
+
+\begin{frame}{Сопряжение Грама-Шмидта}
+Пусть $v_1, \ldots, v_n\in \mathbb{R}^n$, рассмотрим $u_1, \ldots, u_n$:
+$$
+u_k=v_k-\sum_{i=1}^{k-1}\frac{u_i^TAv_k}{u_i^TAu_i}u_i
+$$ 
+\pause
+\vspace{1em}
+Аналогично обычной процедуре Грама-Шмидта докажем по индукции, что $u_j^TAu_k=0$ при $j\neq k$. Пусть это утверждение верно вполть до $k-1$, тогда для $j<k$
+$$
+u^T_jAu_k=u^T_jAv_k-\sum_{i=1}^{k-1}\frac{u_i^TAv_k}{u_i^TAu_i}u^T_jAu_i=u_j^TAv_k-u_j^TAv_k=0.
+$$
+\pause
+Также по индукции доказывается равенство линейных оболочек $\lin\{v_1, \ldots, v_k\}=\lin\{u_1, \ldots, u_k\}$.
+\end{frame}
+
+\begin{frame}{Общая схема метода сопряженных направлений}
+Итого, на данный момент имеем следующую общую схему:\pause
+\begin{itemize}[<+->]
+\item[1.] Выбрать $n$ линейно независимых векторов $v_0, \ldots, v_{n-1}$.
+\item[2.] Построить $n$ сопряженных относительно матрицы $A$ направлений $d_0, \ldots, d_{n-1}$ по формулам
+$$
+d_k=v_k-\sum_{i=0}^{k-1}\frac{d_i^TAv_k}{d_i^TAd_i}d_i
+$$
+\item[3.] Выбрать произвольную точку $x_0$ и построить последовательность
+$$
+x_{k+1}=x_k-\frac{d^T_k(Ax_k-b)}{d_k^TAd_k}d_k
+$$
+\end{itemize}
+\pause
+Из показанного ранее вытекает, что $Ax_n=b$. Если $m$ -- количество ненулевых элементов $A$, то умножение $A$ на вектор требует $\mathcal{O}(m)$ сложений и умножений. Таким образом, шаг $2$ требует суммарно $\mathcal{O}(n^2m)$ действий, шаг $3$ -- $\mathcal{O}(nm)$.
+\end{frame}
+
+\begin{frame}{Подпространства Крылова}
+\begin{definition_ru}
+\underline{Подпространством Крылова} порядка $k$ матрицы $A$ и вектора $b$ называется
+$$
+\mathcal{K}_k(A, b)=\lin\{b, Ab, \ldots, A^{k-1}b\}, ~\mathcal{K}_0(A, b)=\{0\}. 
+$$
+\end{definition_ru}
+\pause
+Пусть $\chi_A(t)=\det(A-tI)=\sum_{i=0}^{n-1}\alpha_it^i-t^n$ -- характеристический полином $A$. Из теоремы Гамильтона-Кэли
+$$
+\chi(A)=\sum_{i=0}^{n-1}\alpha_iA^i-A^n=0
+$$
+\pause
+Умножая на $A^{-1}b$ и учитывая $\alpha_0\neq 0$ для положительно определенной матрицы $A$ получаем
+$$
+A^{-1}b=\frac{1}{\alpha_0}\left(A^{n-1}b-\sum_{i=1}^{n-1}\alpha_iA^{i-1}b\right)\in\mathcal{K}_n(A, b)
+$$
+\end{frame}
+
+\begin{frame}{Последовательность Крылова}
+\begin{definition_ru}
+\underline{Последовательностью Крылова} функции $f(x)=\frac{1}{2}x^TAx-b^Tx$ и начальной точкой $x_0$ называется последовательность
+$$
+x_k=\argmin_{x\in x_0+\mathcal{K}_k(A, Ax_0-b)}f(x)
+$$
+\end{definition_ru}
+\pause
+Из условий оптимальности для $x_k$
+$$
+\nabla f(x_k)=Ax_k-b \bot \mathcal{K}_k(A, Ax_0-b)
+$$
+С другой стороны, раз $x_k\in x_0+\mathcal{K}_k(A, Ax_0-b)$, то очевидным образом 
+$Ax_k-b\in Ax_0-b+A\mathcal{K}_{k}(A,Ax_0-b)\subset \mathcal{K}_{k+1}(A, Ax_0-b)$.\\
+\pause
+\vspace{1em}
+Таким образом $\nabla f(x_k)\notin \mathcal{K}_k(A,Ax_0-b)$, но $\nabla f(x_k)\in \mathcal{K}_{k+1}(A, Ax_0-b)$ $\Rightarrow$
+$$
+\mathcal{K}_k(A, Ax_0-b)=\lin\{\nabla f(x_0), \ldots, \nabla f(x_{k-1})\},
+$$
+в силу $\nabla f(x_k)\in\mathcal{K}_k(A,Ax_0-b)^\bot$ при $i\neq j$
+$$
+\nabla f(x_i)^T\nabla f(x_j)=0
+$$
+\end{frame}
+
+\begin{frame}{Метод сопряженных градиентов}
+Основная идея метода сопряженных градиентов: использование $v_k=\nabla f(x_k)$ в методе сопряженных направлений. \\
+\pause
+\vspace{1em}
+\textbf{1.} Использую индукцию покажем, что при $v_k=\nabla f(x_k)$ 
+метод сопряженных  направлений генерирует последоваельность Крылова для $f$, $x_0$: 
+
+\textbf{База}. $k=0$ -- тривиально.\\
+
+\textbf{Индукционный переход}. Пусть метод сгенерировал последовательность Крылова вплоть до $k-1$, тогда
+так как метод сопряженных направлений выбирает 
+$$
+x_k=\argmin_{x\in x_0+\lin\{d_0, \ldots, d_{k-1}\}}||x-x^*||_A^2,
+$$
+учитывая 
+$$
+||x-x^*||_A^2=(x-x^*)^TA(x-x^*)=x^{*T}Ax^*-2x^{*T}Ax+x^TAx=||x^*||_A^2+2f(x)
+$$
+получаем, что минимизация $||x-x^*||_A$ равносильна минимизации $f(x)$. По построению
+$$
+\lin\{d_0, \ldots, d_{k-1}\}=\lin\{\nabla f(x_0), \ldots, \nabla f(x_{k-1})\},
+$$ по
+индукционному предположению 
+$$\lin\{\nabla f(x_0), \ldots, \nabla f(x_{k-1})\}=\mathcal{K}_k(A, Ax_0-b).~~\blacksquare
+$$
+
+\end{frame}
+
+\begin{frame}{Метод сопряженных градиентов}
+\textbf{2.} Вычисление $d_k$ сильно упрощается:
+$$
+v_i^T(Ax_{k+1}-b)=v_i^T(Ax_{k}-b)-\alpha_{k}v_i^TAd_{k}
+$$
+$$
+v_i^TAd_{k}=\frac{1}{\alpha_{k}}\left(v_i^Tv_{k}-v_i^Tv_{k+1}^T\right)
+$$
+\pause
+Так как $v_i^Tv_j=0$ при $i\neq j$, то $d_i^TAv_k$ отлично от нуля только при $i=k$ или $i=k-1$. Итого шаг $2$ имеет вид
+\begin{align*}
+d_k&=v_k-\sum_{i=0}^{k-1}\frac{d_i^TAv_k}{d_i^TAd_i}d_i=v_k-\frac{v_{k}^Tv_{k}}{\alpha_{k-1}d_{k-1}^TAd_{k-1}}d_{k-1}\\
+&=v_k-\frac{v_{k}^Tv_{k}}{d_{k-1}^Tv_{k-1}}d_{k-1}
+=v_k-\frac{v_{k}^Tv_{k}}{v_{k-1}^Tv_{k-1}}d_{k-1}
+\end{align*}
+\pause
+Это соотношение уменьшает сложность шага $2$ с $\mathcal{O}(km)$ до $\mathcal{O}(m)$ на итерации $k$.
+
+\end{frame}
+
+\begin{frame}{Последовательность Крылова}
+\textit{Замечание.}
+$$
+x\in x_0+\mathcal{K}_k(A, Ax_0-b)\Leftrightarrow x= x_0+\sum_{i=0}^{k-1}\phi_iA^i(Ax_0-b)
+$$
+Если $Ax^*=b$, то
+$$
+x-x^*=x_0-x^*+\sum_{i=0}^{k-1}\phi_iA^iA(x_0-x^*)=\left(I+\sum_{i=1}^{k}\phi_{i-1}A^i\right)(x_0-x^*)
+$$
+\pause
+Таким образом выбор $x_k$ как минимум $||x-x^*||_A$ на множестве $x_0+\mathcal{K}_k(A, Ax_0-b)$ можно
+описать следующим образом
+$$
+x_k=x^*+\argmin_{P(0)=1,~\deg P\leq k}P(A)(x_0-x^*)	
+$$
+
+\end{frame}
+
+\begin{frame}{Асимптотический анализ метода СГ}
+Отметим для начала, что для любого многочлена $P$ и собственного вектора $\nu$: $A\nu=\lambda\nu$ выполняется
+$$
+P(A)\nu=\sum_{i=0}^k\alpha_iA^i\nu=\sum_{i=0}^k\alpha_i\lambda^i\nu=P(\lambda)\nu
+$$
+\pause
+Пусть $\lambda_{min}=\lambda_1\leq \ldots, \leq \lambda_n=\lambda_{max}$ -- собственные значения $A$ (с учетом кратности), $\nu_1, \ldots, \nu_n$ --
+собственные векторы. 
+\end{frame}
+
+\begin{frame}{Асимптотический анализ метода СГ}
+Так как $A$ -- вещественная симметричная матрица, то $\nu$ образуют ортогональный базис, 
+\begin{align*}
+x_0-x^*=\sum_{j=1}^n\xi_j\nu_j.
+\end{align*}
+\pause
+Тогда 
+\begin{columns}
+\begin{column}{.4\textwidth}
+\begin{align*}
+x_k-x^*&=\sum_{j=1}^n\xi_jP_k(\lambda_j)\nu_j\\
+A(x_k-x^*)&=\sum_{j=1}^n\xi_jP_k(\lambda_j)\lambda_j\nu_j\\
+\end{align*}
+\end{column}
+\pause
+\begin{column}{.6\textwidth}
+\begin{align*}
+||x_k-x^*||_A^2&=\sum_{j=1}^nP_k(\lambda_j)^2\lambda_j\xi_j^2||\nu_j||^2\\
+&=\sum_{j=1}^nP_k(\lambda_j)^2||x_0-x^*||^2_A\\
+&\leq \max_{\lambda\in \Lambda(A)}P_k(\lambda)^2||x_0-x^*||^2_A,
+\end{align*}
+\end{column}
+\end{columns}
+где $\Lambda(A)$ -- спектр матрицы $A$ (множество её собственных значений).
+\end{frame}
+
+\begin{frame}{Многочлен градиентного спуска}
+Выбирая многочлен $G_k(x)=\left(1-\frac{2x}{\lambda_{min}+\lambda_{max}}\right)^k$ получаем
+\begin{align*}
+||x_k-x^*||_A^2&\leq \max_{\lambda\in \Lambda(A)}G_k(\lambda)^2||x_0-x^*||^2_A\\
+&=\max_{\lambda\in \Lambda(A)}\left(\frac{\lambda_{min}+\lambda_{max}-2\lambda}{\lambda_{min}+\lambda_{max}}\right)^{2k}||x_0-x^*||^2_A\\
+&=\left(\frac{\lambda_{max}-\lambda_{min}}{\lambda_{min}+\lambda_{max}}\right)^{2k}||x_0-x^*||^2_A,
+\end{align*}
+что соответсвует сходимости градиентного спуска.\\
+\end{frame}
+
+\begin{frame}{Многочлен Чебышева}
+Выбирая $P_k(\lambda)=\frac{T_k\left(\frac{\lambda_{max}+\lambda_{min}-2\lambda}{\lambda_{max}-\lambda_{min}}\right)}{T_k\left(\frac{\lambda_{max}+\lambda_{min}}{\lambda_{max}-\lambda_{min}}\right)}$,
+где $T_k$ -- многочлен Чебышева
+$$
+T_k(x)=\frac{1}{2}\left[(x+\sqrt{x^2-1})^k+(x-\sqrt{x^2-1})^k\right]
+$$
+учитывая $T_k(x)\leq 1$ при $x\in[-1, 1]$ получаем 
+$P_k(\lambda)\leq T_k\left(\frac{\lambda_{max}+\lambda_{min}}{\lambda_{max}-\lambda_{min}}\right)^{-1}$ при $\lambda\in[\lambda_{min}, \lambda_{max}]$
+\pause
+и следовательно
+\begin{align*}
+||x_k-x^*||_A^2&\leq \max_{\lambda\in \Lambda(A)}P_k(\lambda)^2||x_0-x^*||^2_A\\
+&\leq T_k\left(\frac{\lambda_{max}+\lambda_{min}}{\lambda_{max}-\lambda_{min}}\right)^{-1}||x_0-x^*||^2_A\\
+&\leq 2\left[\left(\frac{\sqrt{\lambda_{max}}+\sqrt{\lambda_{min}} }{ \sqrt{\lambda_{max}}-
+\sqrt{\lambda_{min}} }\right)^k+\left(\frac{\sqrt{\lambda_{max}}-\sqrt{\lambda_{min}} }{\sqrt{\lambda_{max}}+
+\sqrt{\lambda_{min}} }\right)^k\right]^{-1}||x_0-x^*||^2_A\\
+&\leq 2\left(\frac{\sqrt{\lambda_{max}}-\sqrt{\lambda_{min}} }{\sqrt{\lambda_{max}}+
+\sqrt{\lambda_{min}} }\right)^k||x_0-x^*||^2_A
+\end{align*}
+\end{frame}
+
+\begin{frame}{Ссылки на литературу}
+\href{http://www.ict.nsc.ru/matmod/files/textbooks/SharyNuMeth.pdf}{\textit{Шарый С. П.} 
+Курс вычислительных методов} // парагаф 3.6\\
+\vspace{1em}
+\href{http://www.seas.ucla.edu/~vandenbe/133A/lectures/chol.pdf}{\textit{Vandenberghe L.} Лекция по разложению Холесского} \\
+\vspace{1em}
+\href{https://www.cs.cmu.edu/~quake-papers/painless-conjugate-gradient.pdf}{\textit{Shewchuk J. R.} An Introduction to
+the Conjugate Gradient Method
+Without the Agonizing Pain} \\
+\end{frame}
+
+
+\end{document}

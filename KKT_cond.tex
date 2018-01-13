@@ -1,0 +1,587 @@
+%\documentclass[10pt]{beamer}
+\documentclass[10pt]{beamer}
+\usetheme{Madrid}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage[OT1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\author{Мальковский Н.~В.}
+\title[Условия ККТ]{Условия Каруша-Куна-Такера в задачах оптимизации}
+\usecolortheme{beaver}
+%\setbeamercovered{transparent} 
+\setbeamertemplate{navigation symbols}{} 
+%\logo{} 
+%\institute[СПбГУ]{Санкт-Петербургский Государственный Университет}
+\date{} 
+\institute[СПбАУ]{Санкт-Петербургский Академический  Университет}
+
+%\subject{} 
+
+\DeclareMathOperator{\argmin}{argmin}
+
+\newtheorem{theorem_ru}{Теорема}[]
+\newtheorem{lemma_ru}{Лемма}[]
+\newtheorem{corollary_ru}{Следствие}[]
+
+\graphicspath{{image/}}
+\newcommand{\Ima}{\text{Im}}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\centering
+\includegraphics[width=.23\textwidth]{logo.png}
+\end{frame}
+
+%\begin{frame}
+%\tableofcontents
+%\end{frame}
+
+\begin{frame}{Задачи оптимизации с ограничениями}
+Общая задача математической оптимизации -- это
+\begin{equation}\label{general_formulation}
+\begin{array}{ll}
+\mbox{минимизировать } & f(x),\\
+\mbox{при условии } & x\in \mathcal{D}.
+\end{array}
+\end{equation}
+
+Решение задачи -- точка $x^*\in \mathcal{D}$ такая, что $\forall x\in \mathcal{D}:~f(x)\geq f(x^*)$. \\
+\pause
+\vspace{1em}
+В подавляющем большинстве случаев множества в таких задачах представляются в виде набора уравнений и неравенств:
+$$
+g(x)\leq 0,~g(x)<0, ~\mbox{или} ~g(x)=0.
+$$
+\pause
+Если $g$ -- дифференцируемая функция без нерегулярных точек, то $g(x)<0$ задает открытой множество, $g(x)\leq 0$ задает замкнутое множество, а $g(x)=0$ задает гиперповерхность. Для первого случая работает условие стационарности, т.е. если $x^*=\argmin_{g(x)<0}f(x)$, то $\nabla f(x^*)=0_n$. Можно ли получить подобное для равенств и нестрогих неравенств?
+\end{frame}
+
+\begin{frame}{Условия стационарности для задач на выпуклых множествах}
+\begin{theorem_ru}
+Пусть в задаче \eqref{general_formulation} множество $\mathcal{D}$ выпукло, а функция $f$ дифференцируема в точке $x^*$, тогда для точки минимума $x^*$ выполняется условие
+$$
+\nabla f(x^*)^T(x-x^*)\geq 0,~~\forall x\in \mathcal{D}.
+$$
+\end{theorem_ru}
+\pause
+\textbf{Док-во.} Предположим, что есть точка $x\in\mathcal{D}$ такая, что $\nabla f(x^*)^T(x-x^*)<0$, тогда в силу дифференцируемости $f$ при достаточно малых $\alpha>0$ получаем
+$$
+f(x^*+\alpha (x-x^*))-f(x^*)=\alpha\nabla f(x^*)^T(x-x^*)+o(\alpha||x-x^*||)\leq
+$$
+$$
+ \alpha \nabla f(x^*)^T(x-x^*)+\alpha ||x-x^*||\left(\frac{-\nabla f(x^*)^T(x-x^*)}{2||x-x^*||}\right)\leq \frac{\alpha}{2}\nabla f(x^*)^T(x-x^*)<0.
+$$
+Так как $x, x^*\in\mathcal{D}$, $\mathcal{D}$ -- выпукло, то при $0<\alpha<1$ точка $x^*+\alpha(x-x^*)$ также принадлежит $\mathcal{D}$. $\blacksquare$  
+
+\end{frame}
+
+\begin{frame}{Условия стационарности для задач на выпуклых множествах}
+\begin{columns}
+\begin{column}{.6\textwidth}
+\textbf{Замечание.} $\nabla f(x^*)\neq 0_n$ допустимо только в случае, если $x^*$ -- граничная точка $\mathcal{D}$. Условие можно переформулировать в следующем виде: если $\nabla f(x^*)\neq 0_n$, то $\nabla f(x^*)^T(x-x^*)=0$ -- опорная к $\mathcal{D}$ гиперплоскость. 
+\end{column}
+\begin{column}{.4\textwidth}
+\includegraphics[width=\textwidth]{first_order.pdf}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Условный экстремум и множители Лагранжа}
+Пусть $\mathcal{D}\subset \mathbb{R}^n$, $\mathcal{D}$ открыто, $f:\mathcal{D}\rightarrow \mathbb{R}$, $g:\mathcal{D}\rightarrow \mathbb{R}^m$ -- непрерывно дифференцируемые функции. Рассмотрим задачу:
+\begin{equation}\label{cond_extr}
+\begin{array}{ll}
+\mbox{минимизировать} &f(x),\\
+\mbox{при условии}    &g(x)=0_m.
+\end{array}
+\end{equation}
+\textit{функцией Лагранжа} (или \textit{лагранжианом}) соответствующей задаче \eqref{cond_extr} называется функция
+$$
+L(\lambda, x)=f(x)+\lambda^T g(x),~\lambda=(\lambda_1, \lambda_2, \ldots, \lambda_m)^T.
+$$
+Коэффициенты $\lambda_i$ принято называть \textit{множителями Лагранжа}.
+\begin{theorem_ru}
+$x^*$ -- точка минимума задачи \eqref{cond_extr} и векторы $\nabla g_i (x^*)$ линейно независимы, тогда существует такой вектор $\lambda=(\lambda_1, \lambda_2, \ldots, \lambda_m)^T$, что
+$$
+\nabla_x L(\lambda, x^*)=0_n.
+$$
+\end{theorem_ru}
+
+\end{frame}
+
+\begin{frame}{Геометрическая интерпретация множителей Лагранжа}
+\begin{columns}
+\begin{column}{.4\textwidth}
+\includegraphics[width=\textwidth]{Lagrange}
+\end{column}
+
+\begin{column}{.6\textwidth}
+\begin{itemize}[<+->]
+\item Вблизи $x^*$ поверхность $g(x)=0$ почти совпадает с гиперплоскостью $\nabla g(x^*)(x-x^*)=0$. 
+\item Если $x^*$ -- регулярная точка $g$, то существует единственное представление $\nabla f(x^*)=\lambda^T\nabla g(x^*)+v^T$ при $\nabla g(x^*)v=0_m$. 
+Для точек $x$ на гиперплоскости $\nabla g(x^*)(x-x^*)=0$ получаем
+$$
+\nabla f(x^*)^T(x-x^*)=(-\lambda^T)\nabla g(x^*)(x-x^*)+
+$$
+$$
+v^T(x-x^*)=v^T(x-x^*).
+$$
+\item Если $v^T(x-x^*)\neq 0$, то $v\neq 0_n$ и $x^*$ не является точкой минимума. Если же $v=0_n$, то выполняется условие Лагранжа с множителями $-\lambda_1, \ldots, -\lambda_m$.
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Геометрическая интерпретация множителей Лагранжа}
+\includegraphics[width=\textwidth]{two_surfaces.png}
+\end{frame}
+
+\begin{frame}{Доказательство метода Лагранжа}
+\textbf{Док-во}: Обозначим за $M$ гиперплоскость
+$$
+M=\{y\in \mathbb{R}^n~|~\nabla g(x^*)^Ty=0_m\}.
+$$
+Пусть $y\in M,~y\neq 0_n$, тогда для некоторого $a>0$ существует кривая $\varphi:[-a,a]\rightarrow\mathbb{R}^n$, такая что $g(\varphi(t))=0$ при $t\in[-a, a]$ и при этом
+$$
+\varphi(0)=x^*,~ \varphi'(0)=y.
+$$
+Так как $x^*$ -- оптимальное значение вдоль кривой $\varphi$, то в силу условий стационарности
+$$
+0=\frac{d}{dt}f(\varphi(t))|_{t=0}=\nabla f(\varphi(t))^T \varphi'(t)|_{t=0}=\nabla f(x^*)^Ty.
+$$
+\pause
+Таким образом, получаем, что вектор $\nabla f(x^*)$ ортогонален $M$, с другой стороны из определения $M$ следует, что векторы $\nabla g_i(x^*)$ образуют базис ортогонального дополнения $M$. Следовательно, $\nabla f(x^*)$ является линейной комбинацией $\nabla g_i(x^*)$, т.е. существуют коэффициенты $\lambda_1, \ldots, \lambda_m$, такие что
+$$
+\nabla f(x^*)=\sum_{i=1}^m\lambda_i\nabla g_i(x^*)\Leftrightarrow 
+\nabla f(x^*)+(-\lambda^T)\nabla g(x^*)=0_n. ~~\blacksquare
+$$
+\end{frame}
+
+\begin{frame}[t]{Простой пример}
+\only<1-3>{
+Рассмотрим задачу 
+$$
+\begin{array}{ll}
+\mbox{максимизировать} &x+y,\\
+\mbox{при условии}    &x^2+y^2=a^2.
+\end{array}
+$$
+}
+\only<2-3>{
+Лагранжиан:
+$$
+F(x,y,\lambda)=x+y-\lambda(x^2+y^2-a^2).
+$$
+Получаем условия стационарности
+\begin{align*}
+1-2\lambda x=0,\\
+1-2\lambda y=0.
+\end{align*}
+}
+\only<3-3>{
+Из этих уравнений следует, что $\lambda\neq 0$. Вычитая первое из второго получаем
+$$
+2\lambda(x-y)=0\Rightarrow x=y.
+$$
+Подставляя в исходное уравнение получаем $x=\pm\frac{a}{\sqrt{2}}$. При этом, если $a=0$, то $x=0$ и условия стационарности не выполняются ни при каком $\lambda$.
+}
+\only<4-4>{
+\begin{center}
+\includegraphics[width=.5\textwidth]{example_cylinder.png}
+\end{center}
+
+}
+\only<5-5>{
+\vspace{2cm}
+Решение параметризацией: окружность $x^2+y^2=a^2$ легко параметризуется:
+$$
+x^2+y^2=a^2~\Leftrightarrow~\exists t\in \mathbb{R}:~ (x,y)=(a\cos(t), a\sin(t)).
+$$
+Применяя условия стационарности получаем
+$$
+0=\frac{d}{dt}[a\cos(t)+a\sin(t)]=a(\cos(t)-\sin(t))\Rightarrow \cos(t)=\sin(t)=\pm\frac{1}{\sqrt{2}}.
+$$
+Отсюда получаем, что $x^*=y^*=\frac{a}{\sqrt{2}}$.
+}
+\only<6-6>{
+Решение методом множителей Лагранжа: найти такую точку на окружности, что касательная в этой точке перпендикулярна вектору $\nabla f(x, y)\equiv (1, 1)$.\\
+\begin{center}
+\includegraphics[width=.7\textwidth]{example_circle.pdf}
+\end{center}
+}
+\end{frame}
+
+
+\begin{frame}{Пример: расстояние от точки до гиперплоскости}
+Пусть в $\mathbb{R}^n$ задана гиперплоскость 
+$$
+a^Tx = a_1x_1+a_2x_2+\ldots+a_nx_n=c.
+$$
+Требуется найти расстояние от этой гиперплоскости до некоторой точки $y$, что можно представить в виде следующей задачи оптимизации:
+$$
+\begin{array}{ll}
+\mbox{минимизировать } & ||x-y||^2=\sum_{k=1}^n(x_k-y_k)^2,\\
+\mbox{при условии }    & a^Tx=c.
+\end{array}
+$$
+\begin{columns}
+\begin{column}{.5\textwidth}
+Функция Лагранжа имеет вид
+$$
+L(\lambda, x)=||x-y||^2-\lambda(a^Tx-c).
+$$
+Получаем необходимые условия
+$$
+2(x-y)-\lambda a=0.
+$$
+\end{column}
+\begin{column}{.45\textwidth}
+\includegraphics[width=.7\textwidth]{Point_hyperplane}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Пример: расстояние от точки до гиперплоскости}
+Разрешим относительно $x$
+$$
+x=\frac{\lambda a}{2}+y.
+$$
+Подставляем в уравнение гиперплоскости
+$$
+\frac{\lambda a^Ta}{2}+a^Ty=c,~~
+\lambda = 2\frac{c-a^Ty}{a^Ta},
+$$
+$$
+x=y+a\frac{c-a^Ty}{a^Ta}.
+$$
+И наконец, квадрат расстояния равен
+$$
+||x-y||^2=(a^Ta) \frac{\lambda^2}{4}=(a^Ta)\frac{(c-a^Ty)^2}{(a^Ta)^2}=\frac{(c-a^Ty)^2}{(a^Ta)}
+$$
+\end{frame}
+
+\begin{frame}{Пример: расстояние от точки до гиперплоскости}
+\begin{columns}
+\begin{column}{.45\textwidth}
+\includegraphics[width=\textwidth]{Point_hyperplane_lagrange}
+\end{column}
+\begin{column}{.5\textwidth}
+Значение $\frac{\lambda}{2}$ можно интерпретировать как  расстояние от $y$ до $a^Tx=c$, измеренная в векторе $a$.
+\end{column}
+\end{columns}
+\vspace{1em}
+
+\end{frame}
+
+\begin{frame}{Пример: электрический ток}
+Оказывается, из первого закона Кирхгофа и одного из вариационных принципов можно вывести остальные законы Кирхгофа. Рассмотрим электрическую цепь из $n$ узлов, $r_{ij}$ -- сопротивление участка цепи между узлами $i$ и $j$, $B$ -- матрица инцидентности соответствующего графа с произвольной ориентацией дуг. Положим, что мы пустили единичный заряд из $s$ в $t$. Обозначим 
+$$
+\chi^{st}_i=\left\{\begin{array}{ll}
+-1 & i = s,\\
+1  & i = t,\\
+0  & i\neq s,t
+\end{array}\right.
+$$ 
+и пусть $I_{ij}$ -- сила тока на участке цепи $ij$, $I$ -- соответствующий вектор, согласованный с нумерацией и ориентацией $B$, тогда первый закон Кирхгофа для этой цепи будет иметь вид
+$$
+BI=\chi^{st}.
+$$
+\end{frame}
+
+\begin{frame}{Пример: электрический ток}
+Далее полагаем, что ток протекает минимизируя энергию
+$$
+\frac{1}{2}\sum_{ij}r_{ij}I^2_{ij}
+$$
+Посмотрим на это как на задачу оптимизации относительно  $I_{ij}$. Лагранжиан имеет вид
+$$
+F(I, \lambda)=\frac{1}{2}\sum_{ij}r_{ij}I^2_{ij}-\lambda^TBI.
+$$
+Дифференцируя по $I_{ij}$ получаем
+$$
+\frac{\partial}{\partial I_{ij}}F(I, \lambda)=r_{ij}I_{ij}-\lambda_j+\lambda_i=0.
+$$
+\end{frame}
+
+\begin{frame}{Пример: электрический ток}
+Отсюда вытекает, что
+$$
+r_{ij}I_{ij}=\lambda_i-\lambda_j.
+$$
+Другими словами, в этом случае множители Лагранжа являются величиной, которую в физике принято называть \textit{потенциалом}, а последнее неравенство является ничем иным как закон Ома.
+\end{frame}
+
+%\begin{frame}{Ограничения в виде неравенств}
+%\begin{itemize}[<+->]
+%\item Метод Лагранжа позволяет позволяет эффективно решать задачи с ограничением в виде равенств.
+%\item Во многих задачах оптимизации возникают ограничения в виде неравенств, свести которые к равенством с сохранением ``хороших'' свойств (дифференцируемость, выпуклость и т.д.) не представляется возможным.
+%\item Как оказалось, метод множителей Лагранжа можно обобщить и на случай с неравенствами. Такое обобщение было независимо предложено Вильямом Карушем (1939) и Харольдом Куном, Альбертом Такером (1951), и на сегодняшний день принято называть условиями Каруша-Куна-Такера.
+%\end{itemize}
+%\end{frame}
+
+\begin{frame}{Ограничения в виде неравенств}
+Рассмотрим функцию $g:\mathbb{R}^n\rightarrow \mathbb{R}^m$ и область, заданную неравенством $g(x)\leq 0_m$ (здесь и далее $x\leq y$ при $x, y\in\mathbb{R}^m$ означает $x_i\leq y_i$, $1\leq i\leq m$). Для обобщения множителей Лагранжа достаточно подметить два важных момента:
+\begin{columns}
+\begin{column}{.65\textwidth}
+\begin{itemize}
+\item Если $g_i(x)<0$ и $g_i(x)$ непрерывна в точке $x^*$, то $g_i(x)<0$ в некоторой окрестности $x^*$, а значит это ограничение не влияет на локальные свойства задачи для точки $x^*$.
+\item Если $g_i(x)=0$, то как и в случае ограничений в виде равенств, $\nabla g_i(x^*)$ задает направление, вдоль которого сдвигаться нельзя. Отличие неравенств состоит в том, что нельзя сдвигаться только против градиента, но можно сдвигаться вдоль.
+\end{itemize}
+\end{column}
+\begin{column}{.35\textwidth}
+~~\includegraphics[width=.9\textwidth]{KKT_inner}\\
+\includegraphics[width=\textwidth]{KKT_border}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Лемма о чувствительности}
+\begin{lemma_ru}
+Рассмотрим задачу
+$$
+\begin{array}{ll}
+\mbox{минимизировать} & f(x) \\
+ & h(x)=d,
+\end{array}
+$$
+где $d\in \mathbb{R}^k$. Пусть $x^*(d), \lambda(d)$ -- решение задачи и соответствующие ему множители Лагранжа, удовлетворяющие
+$$
+\nabla f(x^*(d))+\lambda(d)^T \nabla h(x^*(d))=0_n,
+$$
+при этом система
+\begin{align*}
+\nabla f(x)+\lambda^T \nabla h(x)&=0_n\\
+h(x)&=d
+\end{align*}
+регулярна относительно $x$ в точке $x^*(d)$, тогда
+$$
+\nabla_d f(x^*(d)) = -\lambda(d).
+$$
+\end{lemma_ru}
+
+\end{frame}
+
+\begin{frame}{Лемма о чувствительности}
+\textbf{Док-во.} Применяя условия стационарности получаем систему
+\begin{align*}
+\nabla f (x^*(d)) + \lambda(d)^T \nabla h(x^*(d))=0_n \\
+h(x^*(d)) = d.
+\end{align*}
+\pause
+По теореме о неявном отображении $x^*(d)$ -- дифференцируема (вместе с $\lambda(d)$), при этом выполняются следующие равенства
+\begin{align*}
+\nabla_d f(x^*(d))=\nabla_x f(x^*(d))\nabla_d x^*(d),\\
+\nabla_d h(x^*(d))=\nabla_x h(x^*(d))\nabla_d x^*(d).
+\end{align*}
+\pause
+С другой стороны, из условий задачи следует, что
+\begin{align*}
+\nabla_d h(x^*(d))=I_k.
+\end{align*}
+\end{frame}
+
+\begin{frame}{Лемма о чувствительности}
+Последовательно применяя эти равенства получаем
+\begin{align*}
+\nabla_d f(x^*(d)) &= \nabla_x f(x^*(d))\nabla_d x^*(d) \\ 
+&=-(\lambda(d)^T\nabla_x h(x^*(d)))\nabla_d x^*(d)\\
+&=-\lambda(d)^T\underbrace{\nabla_x h(x^*(d))\nabla_dx^*(d)}_{=\nabla_dh(x^*(d))= I_k}\\
+&=-\lambda(d)^T.~~\blacksquare
+\end{align*}
+\end{frame}
+
+\begin{frame}{Условия Каруша-Куна-Такера}
+Пусть $\mathcal{D}\subset \mathbb{R}^n$, $\mathcal{D}$ открыто, $f:\mathcal{D}\rightarrow \mathbb{R}$, $g:\mathcal{D}\rightarrow \mathbb{R}^m$, $h:\mathcal{D}\rightarrow \mathbb{R}^k$ -- непрерывно дифференцируемые функции. Рассмотрим задачу
+$$
+\begin{array}{ll}
+\mbox{минимизировать } & f(x),\\
+\mbox{при условии }    & g(x)\leq 0_m,\\
+					   & h(x)=0_k.
+\end{array}
+$$
+При выполнении некоторых условий регулярности (например, $\nabla g_i(x^*), \nabla h_i(x^*)$ линейно независимы), если $x^*$ является решением задачи, тогда существует вектора $\lambda\in\mathbb{R}^m$ и $\mu\in\mathbb{R}^k$ такие что выполняются следующие условия:
+$$
+\begin{array}{ll}
+\mbox{1. Стационарность: }& \nabla f(x^*) + \lambda^T\nabla g(x^*)+\mu^T \nabla h(x^*)=0_n.\\
+\mbox{2. Прямая выполнимость: }&g(x^*)\leq 0_m,~h(x^*)=0_k.\\
+\mbox{3. Двойственная выполнимость: }&\lambda\geq 0_m~(\leq 0_m \mbox{ для задачи максимизации}).\\
+\mbox{4. Дополняющая нежесткость: }& \lambda_i g_i(x^*)=0,~1\leq i\leq m.
+\end{array}
+$$
+\end{frame}
+
+\begin{frame}{Доказательство условий ККТ}
+Для начала введем дополнительные переменные $y_1, \ldots, y_m$, $z=(y^2_1,\ldots, y^2_m)^T$ и заметим, что исходная задача эквивалентна следующей
+$$
+\begin{array}{ll}
+\mbox{минимизировать} & f(x), \\
+\mbox{при условии} & g(x)+z= 0_m, \\
+ & h(x)=0_k.
+\end{array}
+$$
+Функция Лагранжа имеет вид
+$$
+F(x, y, \lambda, \mu) = f(x) + \lambda^T(g(x)+z)+\mu^Th(x).
+$$
+Если $x^*$ -- решение задачи, то из теоремы Лагранжа получаем, что существуют векторы $\lambda, \mu$ такие, что
+\begin{align*}
+\nabla_x F(x^*, y^*,\lambda, \mu)= \nabla f (x^*) + \lambda^T\nabla g (x^*) + \mu^T \nabla h(x^*)=0_n, \\
+\frac{\partial}{\partial y_i} F(x^*, y^*,\lambda, \mu) = 2\lambda_i y^*_i = 0, 
+\end{align*}
+Заметим, что если $\lambda_i=0$, то $0=\lambda_i g(x^*)_i$. Если же $\lambda_i\neq 0$, то $y^*_i=0$, а значит $g_i(x)=-(y^*_i)^2=0$. Другими словами, из второго равенства следует 
+$$
+\lambda_ig_i(x^*)=0.
+$$
+\end{frame}
+
+\begin{frame}{Доказательство условий ККТ}
+Предположим, что вместо условия $g(x)=0_m$ имеет место условие $g(x)=d$. Из леммы о чувствительности имеем
+$$
+-\lambda^T=\nabla_d f(x^*(d))|_{d=0}.
+$$
+Очевидным образом, при увеличении любой компоненты вектора $d$ в неравенстве $g(x)\leq d$ ведет за собой увеличение множества, на котором это неравенство выполняется 
+$\Rightarrow$ $\nabla_d f(x^*(d))\leq 0$ $\Rightarrow$ $\lambda\geq 0_m$ $\blacksquare$.
+
+\end{frame}
+
+\begin{frame}{Пример: water-filling}
+Рассмотрим задачу
+$$
+\begin{array}{ll}
+\mbox{минимизировать } & -\sum_{i=1}^n\log(\alpha_i+x_i),\\
+\mbox{при условии }   & x\geq 0, \\
+ & \mathbf{1}_n^Tx=1,
+\end{array}
+$$
+где $\alpha_i>0$. Введем двойственные переменные $\lambda\in \mathbb{R}^n$ для неравенства $x\geq 0$ и $\mu\in \mathbb{R}$ для равенства $\mathbf{1}_n^Tx=1$. Получаем условия стационарности
+$$
+-\frac{1}{\alpha_i+x_i}-\lambda_i+\mu=0.
+$$
+Двойственная выполнимость 
+$$
+\lambda\geq 0.
+$$
+Дополняющая нежесткость
+$$
+\lambda_ix_i=0.
+$$
+\end{frame}
+\begin{frame}{Пример: water-filling}
+От $\lambda$ можно избавиться следующим образом:
+$$
+-\frac{1}{\alpha_i+x_i}-\lambda_i+\mu=0,~\lambda\geq 0 \Leftrightarrow
+-\frac{1}{\alpha_i+x_i}+\mu\geq 0.
+$$
+Дополняющая нежесткость можно переписать в виде
+$$
+\left(\mu-\frac{1}{\alpha_i+x_i}\right)x_i=0.
+$$
+Если $\mu<\frac{1}{\alpha_i}$, то $x_i>0$, так как при $x_i=0$
+$$
+\mu\geq \frac{1}{\alpha_i+x_i}=\frac{1}{\alpha_i},
+$$
+а значит из условий дополняющей нежесткости получаем, что $\mu=1/(\alpha_i+x_i)$. \\
+Если $\mu\geq \frac{1}{\alpha_i}$, то $x_i=0$, так как при $x_i>0$
+$$
+\mu\geq \frac{1}{\alpha_i}>\frac{1}{\alpha_i+x_i},
+$$
+что нарушает условие дополняющей нежесткости. 
+
+\end{frame}
+
+\begin{frame}{Пример: water-filling}
+Итого имеем
+$$
+x_i=\left\{\begin{array}{ll}
+1/\mu-\alpha_i ~&~\mu<1/\alpha_i,\\
+0, ~&~\mu\geq 1/\alpha_i.
+\end{array}\right.
+$$
+В более простой форме, $x_i=\max\{0, 1/\mu-\alpha_i\}$. Подставляя в исходное условие получаем
+$$
+\mathcal{L}(1/\mu)=\sum_{i=1}^n\max\{0, 1/\mu-\alpha_i\}=1.
+$$
+Заметим, что $\mathcal{L}$ -- кусочно-линейная функция, при этом $\mathcal{L}(-\infty)=0$, $\mathcal{L}(+\infty)=+\infty$, $\mathcal{L}(t)$ строго возрастает при $t>\min_i\alpha_i$ и $\mathcal{L}(\min_i\alpha_i)=0$, а значит уравнение $\mathcal{L}(t)=1$ имеет единственное решение.
+\end{frame}
+
+\begin{frame}{Пример: water-filling}
+Нахождение решения $\mathcal{L}(t)=1$ зачастую называют \textit{water-filling algorithm} ($\mathcal{O}(n\log n)$ или $\mathcal{O}(n)$, если известен отсортированный порядок $\alpha_i$) из-за того, что распределение $x_i$ напоминают распределение воды в неоднородной среде\\
+\begin{center}
+\includegraphics[width=.75\textwidth]{water_filling}
+\end{center}
+\end{frame}
+
+\begin{frame}{Двойственная задача}
+Лагранжиан:
+$$
+L(x, \lambda, \mu)=f(x)+\lambda^Tg(x)+\mu^Th(x).
+$$ 
+\textit{Двойственной функцией Лагранжа} называется функция
+$$
+q(\lambda, \mu) := \inf_{x\in \mathcal{D}}L(x, \lambda, \mu).
+$$
+Двойственная задача:
+$$
+\begin{array}{ll}
+\mbox{максимизировать } &~ q(\lambda, 
+\mu), \\
+\mbox{при условии } &~ \lambda\geq 0_m, \\
+\end{array}
+$$
+Часто удобно непосредственно добавлять к этой задаче ограничение $q(\lambda, \mu)>-\infty$.
+\end{frame}
+
+\begin{frame}{Свойства двойственной задачи}
+\begin{itemize}
+\item Функция $q$ -- вогнута (выпукла вверх): $L(x, \lambda, \mu)$ линейна по $\lambda$ и $\mu$ для любого $x$, а значит, вогнута по $\lambda$ и $\mu$. Легко проверить, что если $F(x, y)$ вогнута по $y$ для любого $x$, то $\inf_xF(x, y)$ также вогнута. Как следствие, двойственная задача всегда имеет решение.
+\item Если условия $g(x)=0_m$, $h(x)=0_k$ выполнимы, то для любых допустимых $x$ и $\lambda\geq 0_m$, $\mu$ имеет место неравенство
+$$
+q(\lambda, \mu)\leq f(x).
+$$
+Пусть $x$ -- допустимая точка, тогда
+$$
+f(x)\geq f(x)+\underbrace{\lambda^Tg(x)}_{\leq 0}+\underbrace{\mu^Th(x)}_{=0}\geq \inf_{x\in\mathcal{D}}L(x, \lambda, \mu)=q(\lambda, \mu).
+$$
+В частности, если обе задачи разрешимы, то для оптимальных значений $x^*, \lambda^*, \mu^*$ выполняется неравенство
+$$
+q(\lambda^*, \mu^*)\leq f(x^*).
+$$
+Это свойство принято называть \textit{слабой двойственностью}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Сильная двойственность}
+Очевидным образом, если для прямой и двойственных задач найдены такие значения $x^*, \lambda^*, \mu^*$, что
+$$
+f(x^*)=q(\lambda^*, \mu^*),
+$$
+то $x^*$ -- оптимальное решение прямой задачи, а $\lambda^*, \mu^*$ -- решение двойственной задачи. Свойство, когда такая ситуация возможна, принято называть \textit{сильной двойственностью}. К сожалению, сильная двойственность не всегда имеет место. Наиболее распространенное условие выполнение сильной двойственности -- так называемое \textit{условие Слейтера}: Если в задаче
+$$
+\begin{array}{ll}
+\mbox{минимизировать } & f(x),\\
+\mbox{при условии }    & g(x)\leq 0_m,\\
+	& Ax=b
+\end{array}
+$$
+с выпуклыми функциями $f,g$ существует такая точка $\tilde{x}$, что $g(\tilde{x})<0_m$, $A\tilde{x}=b$, то для этой задачи и двойственной к ней выполняется сильная двойственность.
+
+\end{frame}
+
+\begin{frame}{Ссылки на литературу}
+\href{http://premolab.ru/pub_files/pub5/MnexoB89z7.pdf}{\textit{Нестеров Ю. Е.} 
+Методы выпуклой оптимизации} // парагаф 3.1, теорема 3.1.17 (вывод KKT через субдифференциальное исчисление) \\
+\vspace{1em}
+\href{https://web.stanford.edu/~boyd/cvxbook/bv_cvxbook.pdf}{\textit{Boyd S., Vandenberghe L.} 
+Convex optimization} // парагафы 5.2, 5.5.3 \\
+\vspace{1em}
+\href{https://web.stanford.edu/class/msande310/310trialtext.pdf}{\textit{Luenberger D., Ye Y.} 
+Linear and nonlinear programming} // Глава 11 \\
+\end{frame}
+
+
+
+\end{document}

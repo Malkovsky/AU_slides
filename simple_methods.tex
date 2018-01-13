@@ -1,0 +1,246 @@
+\documentclass[10pt]{beamer}
+\usetheme{Madrid}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage[OT1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\author{Мальковский Н.~В.}
+\title[Введение]{Задачи оптимизации и поиска корней функции}
+%\setbeamercovered{transparent} 
+\setbeamertemplate{navigation symbols}{} 
+%\logo{} 
+\institute[СПбAУ]{Санкт-Петербургский Академический Университет}
+\date{} 
+%\subject{} 
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\argmax}{argmax}
+\usecolortheme{beaver}
+
+
+\newtheorem{theorem_ru}{Теорема}[]
+\newtheorem{lemma_ru}{Лемма}[]
+\newtheorem{corollary_ru}{Следствие}[]
+
+\graphicspath{{image/}}
+\newcommand{\Ima}{\text{Im}}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\centering
+\includegraphics[width=.23\textwidth]{logo.png}
+\end{frame}
+
+\begin{frame}{Задача нахождения корня функции}
+Пусть $f:D\rightarrow \mathbb{R}^n$. \underline{Корнем} функции называется точка $x^*\in D$, такая что 
+$$
+f(x^*)=0_n.
+$$
+Традиционно задачу о нахождении корня функции попросту называют уравнением в случае $n=1$, и системой уравнений в случае $n>1$.
+\end{frame}
+
+\begin{frame}{Задача оптимизации}
+Пусть $f:D\rightarrow \mathbb{R}^n$. \underline{Глобальным минимумом} функции $f$ на $D$ называется точка $x^*$, такая что
+$$
+\forall x\in D:~f(x)\geq f(x^*).
+$$
+\pause
+Обозначается$$
+\argmin_{x\in D} f(x).
+$$
+\pause
+Аналогично, \textit{глобальный максимум} $f$ на $D$ -- такая точка $x^*$, что
+$$
+\forall x\in D:~f(x)\geq f(x^*),~x^*=\argmax_{x\in D} f(x).
+$$
+\pause
+Задача оптимизации -- нахождение либо глобального минимума, либо глобального максимума.\\
+\vspace{1em}
+\pause
+\textit{Замечание}. Задача максимизации $f$ -- это задача минимизации ``$-f$''. Большинство задач оптимизации формулируются в терминах нахождения минимума. Далее под $x^*$ будет обычно обозначаться точка глобального минимума.
+\end{frame}
+
+\begin{frame}{Связь задач нахождения минимума и корня функций}
+Заметим, что
+$$
+f(x^*)=0~\Rightarrow~x^*=\argmin_x|f(x)|=\argmin_xf(x)^2.
+$$
+\pause
+Таким нехитрым образом можно свести задачу нахождения корня к задаче нахождения минимума. В обратную сторону сведение можно получить только для дифференцируемых функций.
+\end{frame}
+\begin{frame}{Теорема Ферма}
+\begin{theorem_ru}
+$f:\mathcal{D}\subset \mathbb{R}^n$, $x^*$ -- внутренняя точка $\mathcal{D}$ и $f$ дифференцируема в точке $x^*$. Если $x^*$ -- точка минимума $f$ на $\mathcal{D}$, тогда выполняется условие:
+$$
+\nabla f(x^*)=0_n.
+$$
+\end{theorem_ru}
+\pause
+\textbf{Док-во}:
+Пусть $\nabla f(x_*)\neq 0_n$, $\epsilon>0$: $B(x, \epsilon)\subset \mathcal{D}$.\\
+В силу дифференцируемости $f$ в точке $x^*$
+$$
+f(x)=f(x^*)+\nabla f(x^*)(x-x^*)+\alpha(x-x^*)(x-x^*),
+$$
+$$
+\alpha(x)\rightarrow 0~(x\rightarrow 0).
+$$ 
+\pause
+Пусть $x'=x^*-\delta \nabla f(x^*)\neq x^*$, $\delta>0$ достаточно малое, чтобы выполнялось $\alpha(x')\leq |\frac{\nabla f(x^*)}{2}|$ и $x'\in B(x^*, \epsilon)$, тогда
+$$
+f(x')=f(x^*)-\delta|\nabla f(x^*)|^2+\alpha(x')(x'-x^*)\leq
+f(x^*)-\frac{\delta}{2}|\nabla f(x^*)|^2< f(x^*).
+$$
+Т.е. $x^*$ не точка минимума. $\blacksquare$
+\end{frame}
+
+\begin{frame}{Стационарность}
+Замечания:
+\begin{itemize}[<+->]
+\item Данную теорему обычно называют \underline{условием стационарности} или условиями оптимальности первого порядка. Точку, удовлетворяющей этим условием называют \underline{стационарной точкой} или критической точкой.
+\item Условия стационарности не являются достаточными, как например для точки $0$ функции $f(x)=x^3$.
+\item Точка $x^*$ называется \textit{локальным минимумом} $f$ на $D$, если существует $\epsilon>0$, что
+$$
+\forall x\in D,~||x-x^*||<\epsilon~f(x)\geq f(x^*).
+$$
+Если для для $f$ в точке $x^*$ гессиан положительно определен, то $x^*$ гарантированно является точка локального минимума. Это свойство принято называть \underline{условием оптимальности второго порядка}.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Метод бисекции}
+Пусть $f:[a,b]\rightarrow \mathbb{R}$, $f$ непрерывна и $f(a)<0<f(b)$. Требуется найти такую точку $x^*\in (a, b)$, что $f(x^*)=0$. Из непрерывности $f$ следует, что $x^*$ существует.
+\begin{center}
+\includegraphics[width=.7\textwidth]{bisection1}
+\end{center}
+
+\end{frame}
+
+\begin{frame}{Метод бисекции}
+Алгоритм:
+\begin{itemize}
+\item Разделить отрезок $[a,b]$ пополам и посмотреть значение $f$ посередине.
+\item Если $f\left(\frac{a+b}{2}\right)>0$, отбросить правую половину
+$$
+b\leftarrow \frac{a+b}{2}.
+$$
+\item Если $f\left(\frac{a+b}{2}\right)<0$, отбросить правую половину
+$$
+a\leftarrow \frac{a+b}{2}.
+$$
+\item Если $f\left(\frac{a+b}{2}\right)=0$, то решение найдено.
+\item Если $b-a>\epsilon$, повторить сначала.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Метод бисекции}
+\only<1-1>{
+\begin{center}
+\includegraphics[width=.8\textwidth]{bisection1}%
+\end{center}
+}
+\only<2-2>{
+\begin{center}
+\includegraphics[width=.8\textwidth]{bisection2}%
+\end{center}
+}
+\only<3-3>{
+\begin{center}
+\includegraphics[width=.8\textwidth]{bisection3}%
+\end{center}
+}
+\only<4-4>{
+\begin{center}
+\includegraphics[width=.8\textwidth]{bisection4}%
+\end{center}
+}
+\only<5-5>{
+\begin{center}
+\includegraphics[width=.8\textwidth]{bisection5}%
+\end{center}
+}
+\end{frame}
+
+\begin{frame}{Метод бисекции}
+Свойства:
+\begin{itemize}
+\item На каждом этапе алгоритма выполняется свойство $f(a)<0<f(b)$, а значит алгоритм всегда работает с отрезком, который содержит корень.
+\item Не находит точное значение корня, но может найти приближенное значение с любой заданной точностью.
+\item Для нахождения корня с точностью $\epsilon>0$ необходимо сделать $\log_2\left(\frac{b-a}{\epsilon}\right)$ итераций.
+\item * Иногда этот метод называют \textit{методом дихотомии}, в дискретном случае этом метод обычно называют \textit{двоичным} или \textit{бинарным поиском}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Тернарный поиск}
+Пусть $f:[a,b]\rightarrow\mathbb{R}$, $\exists x^*\in (a, b):$ $f$ строго убывает на $[a, x^*]$, $f$ строго возрастает на $[x^*, b]$. Нужно найти минимум функции $f$ на $[a, b]$, т.е. точку $x^*$. Функцию, обладающую подобным свойством принято называть унимодальной.
+
+\begin{center}
+\includegraphics[width=.5\textwidth]{ternary1}
+\end{center}
+
+\end{frame}
+
+\begin{frame}{Тернарный поиск}
+Алгоритм:
+\begin{itemize}
+\item Выбрать любые две точки $a<m_1<m_2<b$.
+\item Если $f(m_1)<f(m_2)$, то $x^*\notin [m_2, b]$,
+$$
+b\leftarrow m_2.
+$$
+\item Если $f(m_1)>f(m_2)$, то $x^*\notin [a, m_1]$.
+$$
+a\leftarrow m_1.
+$$
+\item Если $f(m_1)=f(m_2)$, то $x^*\notin  [m_2, b]\cup [a, m_1]$,
+$$
+a\leftarrow m_1,~b\leftarrow m_2.
+$$
+\item Если $b-a>\epsilon$, повторить сначала.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Тернарный поиск}
+\only<1-1>{
+\begin{center}
+\includegraphics[width=.65\textwidth]{ternary1}
+\end{center}
+}
+\only<2-2>{
+\begin{center}
+\includegraphics[width=.65\textwidth]{ternary2}
+\end{center}
+}
+\only<3-3>{
+\begin{center}
+\includegraphics[width=.65\textwidth]{ternary3}
+\end{center}
+}
+\only<4-4>{
+\begin{center}
+\includegraphics[width=.65\textwidth]{ternary4}
+\end{center}
+}
+\only<5-5>{
+\begin{center}
+\includegraphics[width=.65\textwidth]{ternary5}
+\end{center}
+}
+\end{frame}
+
+\begin{frame}{Тернарный поиск}
+Свойства:
+\begin{itemize}
+\item На каждом этапе алгоритма выполняется свойство $a<x^*<b$.
+\item Опять же, не получится найти минимум точно, только с любой заданной точностью.
+\item Если точки делят отрезок на $3$ равные части, то для нахождения минимума с точностью $\epsilon>0$ необходимо сделать $\log_{\frac{3}{2}}\frac{b-a}{\epsilon}$ итераций.
+\end{itemize}
+\end{frame}
+
+
+\end{document}

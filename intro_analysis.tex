@@ -1,0 +1,577 @@
+%\documentclass[10pt]{beamer}
+\documentclass[10pt, handout]{beamer}
+\usetheme{Madrid}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage[OT1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\author{Мальковский Н.~В.}
+\title[Основы анализа]{Основные элементы математического анализа, используемые в теории оптимизации}
+%\setbeamercovered{transparent} 
+\setbeamertemplate{navigation symbols}{} 
+%\logo{} 
+\institute[СПбАУ]{Санкт-Петербургский Академический Университет}
+\date{} 
+%\subject{} 
+\usecolortheme{beaver}
+
+\newtheorem{theorem_ru}{Теорема}[]
+\newtheorem{lemma_ru}{Лемма}[]
+\newtheorem{corollary_ru}{Следствие}[]
+\newtheorem{definition_ru}{Определение}[]
+
+\graphicspath{{image/}}
+\newcommand{\Ima}{\text{Im}}
+\newcounter{remarknumber}[framenumber]
+\newcommand{\remark}{\stepcounter{remarknumber}\textit{Замечание}~\arabic{remarknumber}}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\centering
+\includegraphics[width=.23\textwidth]{logo.png}
+\end{frame}
+
+%\begin{frame}
+%\tableofcontents
+%\end{frame}
+
+\begin{frame}{Скалярное произведение}
+\begin{definition_ru}
+Пусть $X$ -- линейное пространство над $\mathbb{R}$ (или $\mathbb{C}$). \underline{Скалярным произведением} на $X$ называется функция $\langle\cdot, \cdot\rangle:X\times X\rightarrow \mathbb{R}$(или $\mathbb{C}$), обладающей следующими свойствами
+\begin{enumerate}
+\item Симметричность
+$$
+\langle x,y\rangle=\overline{\langle y,x\rangle}, x,y\in X,
+$$
+где $\overline{y}$ -- комплексное сопряжение $y$.
+\item Линейность
+\begin{align*}
+&\langle\alpha x,y\rangle=\alpha\langle x, y\rangle, ~x,y\in X, \\
+&\langle x+z,y\rangle=\langle x, y\rangle+\langle z, y\rangle,~x\in X,~\alpha\in \mathbb{R}(\mathbb{C}).
+\end{align*}
+\item Положительная определенность, $\langle x, x\rangle\in \mathbb{R}$ и
+\begin{align*}
+&\langle x, x\rangle\in \mathbb{R}\geq 0\\
+&\langle x, x\rangle\in \mathbb{R}=0\Leftrightarrow x=0.
+\end{align*}
+
+\end{enumerate}
+\end{definition_ru}
+
+\end{frame}
+
+\begin{frame}{Скалярное произведение}
+Стандартное скалярное произведение в $\mathbb{R}^n$: $x=(x_1, \ldots, x_n)^T$, $y=(y_1, \ldots, y_n)^T$, тогда
+$$
+\langle x, y \rangle=\sum_{i=1}^nx_iy_i=x^Ty=y^Tx.
+$$
+Последнее обозначение -- стандартное матричное произведение, в дальнейшем будет использовано в основном только оно.\\
+\pause
+\vspace{1em}
+Скалярное произведение в $\mathbb{C}^n$:
+$$
+\langle x, y \rangle=\sum_{i=1}^nx_i\overline{y_i}=y^\dagger x.
+$$
+\pause
+\vspace{1em}
+Скалярное произведение функций из $C([a, b])$:
+$$
+\langle f, g \rangle=\int_a^bf(x)\overline{g(x)}dx
+$$
+\end{frame}
+
+\begin{frame}{Норма и нормированные пространства}
+\begin{definition_ru}
+Пусть $X$ -- линейное пространство над $\mathbb{R}$(или $\mathbb{C}$). \underline{Нормой} на $X$ называется функция $||\cdot||:X\rightarrow \mathbb{R}$, для которой выполняются следующие свойства
+\begin{enumerate}
+\item Строгая положительная определенность
+$$
+||x||\geq 0,~||x||=0\Leftrightarrow x=0,~x\in X.
+$$
+\item Гомогенность
+$$
+||\alpha x||=|\alpha|\cdot ||x||, ~~x\in X,~\alpha\in \mathbb{R}(\mathbb{C}).
+$$
+\item Неравенство треугольника
+$$
+||x+y||\leq ||x||+||y||,~~x,y\in X.
+$$
+\end{enumerate}
+\end{definition_ru}
+
+\end{frame}
+
+\begin{frame}{Норма и нормированные пространства}
+Норма, индуцированная скалярным произведением: если $\langle \cdot, \cdot \rangle$ -- скалярное произведение, то $||x||=\sqrt{\langle x, x \rangle}$ -- норма.\\
+\pause
+\vspace{1em}
+$p$-норма в $\mathbb{R}^n$: пусть $p\geq 1$, тогда функция 
+$$
+g(x)=\left(\sum_{i=1}^n|x_i|^p\right)^{1/p}
+$$
+является нормой. Принято обозначение $||x||_p:=g(x)$. При $p=2$ получаем \textit{евклидову норму}, она же является нормой, индуцированной стандартным скалярным произведением в $\mathbb{R}^n$:
+$$
+||x||_2^2=\sum_{i=1}^nx^2_i=x^Tx.
+$$
+В дальнейшем по умолчанию в $\mathbb{R}^n$ будет использоваться именно эта норма.
+\end{frame}
+
+\begin{frame}{Норма и нормированные пространства}
+При $p=1$ получаем
+$$
+||x||_1=\sum_{i=1}^n|x_i|.
+$$
+\\
+\pause
+Функция $||x||_\infty=\lim_{p\rightarrow\infty}||x||_p$ также является нормой:
+$$
+||x||_\infty=\lim_{p\rightarrow\infty}||x||_p=\lim_{p\rightarrow\infty}\left(\sum_{i=1}^n|x_i|^p\right)^{1/p}
+$$
+$$
+=\lim_{p\rightarrow\infty}max_j|x_j|\left(\underbrace{\sum_{i=1}^n\left(\frac{|x_i|}{max_j|x_j|}\right)^p}_{1\leq \ldots \leq n}\right)^{1/p}
+=max_j|x_j|.
+$$
+\pause
+Метрика, индуцированная нормой: если $||\cdot||$ -- норма, то $\rho(x,y)=||x-y||$ -- метрика.
+\end{frame}
+
+\begin{frame}{Операторная и двойственная нормы}
+Если $||\cdot||$ -- норма в $X$, индуцированная скалярным произведением, то
+$$
+||A||_{op}:=\sup_{x\in X}\frac{||Ax||}{||x||}
+$$
+норма в пространстве ограниченных операторов над $X$.\\
+\vspace{1em}
+\pause
+Двойственная норма: если $||\cdot||$ -- норма в $X$, то
+$$
+||s||_*:=sup_{x\in X}\frac{|\langle s, x\rangle|}{||x||}
+$$
+является нормой в пространстве линейных функционалов над $X$ (обозначается $X^*$). \pause Двойственная норма является операторной нормой: $||s||_*=||\langle s, \cdot\rangle||_{op}$. Основное свойство этих норм:
+\begin{align*}
+&||Ax||\leq ||A||_{op}||x|| \\
+&\langle s, x\rangle\leq ||s||_*||x||.
+\end{align*}
+\end{frame}
+
+\begin{frame}{Операторная и двойственная нормы}
+Пусть $p, q>0, p^{-1}+q^{-1}=1$. Из неравенства Гёльдера
+$$
+\frac{|\langle s, x\rangle|}{||x||_p}\leq \frac{||s||_q||x||_p}{||x||_p}=||s||_q,
+$$
+причем равенство достигается при $s=x$, а значит $||\cdot||_q$ -- норма, двойственная к $||\cdot||_p$. В частности, евиклидова норма двойственна сама себе. Также, $||\cdot||_1$ двойственна к $||\cdot||_\infty$.\\
+\vspace{1em}
+\pause
+Наконец, двойственность симметрична, т.е.
+$$
+||x||_{**}=||x||.
+$$
+\end{frame}
+
+\begin{frame}{Дифференцируемость одномерной функции}
+\begin{definition_ru}
+Пусть $f:\mathcal{D}\subset\mathbb{R}\rightarrow \mathbb{R}$, $x$ -- внутренняя точка $\mathcal{D}$. Говорят, что $f$ \underline{дифференцируема} в точке $x$, если существует такое $a$, что выполняется 
+$$
+f(x+h)=f(x)+ah+o(h).
+$$
+Число $a$ принято называть \underline{производной} $f$ в точке $x$.
+\end{definition_ru}
+\pause
+\textit{Замечание} 1. Функция дифференцируема на множестве $A\in \mathcal{D}$, если она дифференцируема в каждой точке $A$, обозначается $f\in C^{(1)}(A)$. \textit{Производная} функции $f$ -- функция, сопоставляющая каждой точке производную $f$ в этой точке, обозначается $f',~\frac{df}{dx}$ или $\frac{d}{dx}f$.\\
+\pause
+\textit{Замечание} 2. Если $f'$ также является дифференцируемой функцией, то говорят, что $f$ -- дважды дифференцируема. Вторая производная $f$ -- производная производной $f$, обозначается $f'',~ \frac{d^2f}{dx^2}$ или $\frac{d^2}{dx^2}f$. Последующие производные вводятся индуктивно, обозначаются $f^{(n)},~\frac{d^nf}{dx^n}$ или $\frac{d^n}{dx^n}$, для дифференцируемости используется обозначение $f\in C^{(n)}(A)$.
+
+\end{frame}
+
+\begin{frame}{Ряд Тейлора}
+\begin{definition_ru}
+Пусть $f\in C^{(n)}([a,b])$, $x\in (a, b)$, \underline{рядом Тейлора} функции $f$ в точке $x$ называется следующее разложение $f$ в точке $x$
+$$
+f(x+h)=\sum_{i=0}^nf^{(n)}(x)\frac{h^n}{n!}+R(x, h).
+$$
+\end{definition_ru}
+\pause
+\textit{Замечание} 1. Остаток в форме Пеано:
+$$
+f(x+h)=\sum_{i=0}^nf^{(n)}(x)\frac{h^n}{n!}+o(h^n).
+$$
+\pause
+\textit{Замечание} 2. Остаток в форме Лагранжа ($f\in C^{(n+1)}([a, b])$): Существует точка $c\in (x, x+h)$, что выполняется
+$$
+f(x+h)=\sum_{i=0}^nf^{(n)}(x)\frac{h^n}{n!}+f^{(n+1)}(c)\frac{h^{n+1}}{(n+1)!}.
+$$
+\textit{Замечание} 3. Есть и другие формы остатка: интегральная, Коши и~т.~д.
+\end{frame}
+
+\begin{frame}{Частные производные и градиент}
+\begin{definition_ru}
+Пусть $f:\mathcal{D}\subset\mathbb{R}^n\rightarrow \mathbb{R}$, $\mathcal{D}_1=\{z~|~z\in \mathbb{R},~y\in \mathbb{R}^{n-1},~(z,y)\in \mathcal{D}\}$, $g\in \mathcal{D}_1\rightarrow \mathbb{R}$, $x=(x_1, x_2, \ldots, x_n)\in \mathcal{D}$ и при этом
+$$
+g(z)=f(z, x_2, \ldots, x_n).
+$$
+\underline{Частной производной} $f$ по переменной $x_1$ в точке $x$ называется производная функции $g$ в точке $x_1$, обозначается $\frac{\partial f}{\partial x_1}(x)$, $\frac{\partial}{\partial x_1}f(x)$ или $\nabla_{x_1}f(x)$. Аналогичным образом вводятся производные по переменным $x_2, \ldots, x_n$.
+\end{definition_ru}
+\pause
+\begin{definition_ru}
+Вектор $\left(\frac{\partial f}{\partial x_1}(x),\ldots, \frac{\partial f}{\partial x_n}(x)\right)^T$ называется \underline{градиентом} функции $f$ в точке $x$. Обозначается $\nabla f(x)$.
+\end{definition_ru}
+\pause
+\textit{Замечание}. Дифференцируемость в многомерном случае: если существует линейное приближение $f(x+h)=f(x)+a^Th+o(||h||)$, то $f$ имеет все частные производные и при этом $a=\nabla f(x)$.
+\end{frame}
+
+\begin{frame}{Гессиан}
+\begin{definition_ru}
+Пусть $f:\mathcal{D}\subset\mathbb{R}^n\rightarrow\mathbb{R}$, $f$ дифференцируема в точке $x$ и при этом существует симметричная матрица $H$ такая, что
+$$
+f(x+h)=f(x)+\nabla f(x)^Th+\frac{1}{2}h^THh+o(||h||^2),
+$$
+то $f$ дважды дифференцируема в точке $x$, а матрицу $H$ принято называть \underline{матрицей Гессе}, \underline{гессианом} или \underline{матрицей вторых производных} и обозначать $\nabla^2f(x)$.
+\end{definition_ru}
+\pause
+\textit{Замечание} 1. В этом определении правая часть равенства является квадратичным приближением многомерной функции.\\
+\pause
+\textit{Замечание} 2. Если $f$ дважды дифференцируема в  точке $x$ и дифференцируема в окрестности $x$, то $\nabla^2f(x)=\nabla(\nabla f(x))$.
+\end{frame}
+
+\begin{frame}{Выпуклость множеств}
+\begin{definition_ru}
+Подмножество $\mathcal{D}$ некоторого линейного пространства над $\mathbb{R}$ называется выпуклым, если $\forall t\in (0, 1),~x, y\in \mathcal{D}$ выполняется
+$$
+tx+(1-t)y\in \mathcal{D}.
+$$
+\end{definition_ru}
+\end{frame}
+
+\begin{frame}{Выпуклость функций}
+\begin{definition_ru}
+Пусть $\mathcal{D}\subset \mathbb{R}^n$ -- выпуклое множество. Функция $f:\mathcal{D}\rightarrow\mathbb{R}$ называется \underline{выпуклой}, если $\forall x, y\in \mathcal{D}, 0<t<1$ выполняется
+$$
+f(tx+(1-t)y)\leq tf(x)+(1-t)f(y).
+$$
+\end{definition_ru}
+\pause
+\begin{definition_ru}
+Пусть $\mathcal{D}\subset \mathbb{R}^n$ -- выпуклое открытое множество. Функция $f:\mathcal{D}\rightarrow\mathbb{R}$ называется \underline{сильно выпуклой} с константой $m>0$, если $\forall x, y\in \mathcal{D}, 0<t<1$ выполняется
+$$
+f(tx+(1-t)y)\leq tf(x)+(1-t)f(y)-t(1-t)\frac{m}{2}||x-y||^2_2.
+$$
+\end{definition_ru}
+\pause
+\textit{Замечание}. Формально можно считать, что выпуклость -- это сильная выпуклость с константой $m=0$.
+\end{frame}
+
+\begin{frame}{Условия выпуклости первого порядка}
+\begin{theorem_ru}[Условия выпуклости первого порядка]
+Если $f$ дифференцируема, то сильная выпуклость $f$ c параметром $m$ равносильна
+$$
+f(y)\geq f(x)+\nabla f(x)^T(y - x)+
+\frac{m}{2}||y-x||^2~~\forall x, y\in\mathcal{D}.
+$$
+\end{theorem_ru}
+\pause
+\textbf{Док-во.} Если $f$ выпукла и дифференцируема, то для $0<t<1$
+$$
+f(x+t(y-x))\leq f(x)+t(f(y)-f(x))-t(1-t)\frac{m}{2}||x-y||^2.
+$$
+\pause
+После деления на $t$ и переноса слагаемых получаем
+$$
+f(y)\geq f(x)+\frac{f(x+t(y-x))-f(x)}{t}+(1-t)\frac{m}{2}||x-y||^2.
+$$
+\pause
+Устремляя $t$ к нулю получаем желаемое неравенство.
+\end{frame}
+
+\begin{frame}{Условия выпуклости первого порядка}
+С другой стороны, если $x, y\in \mathcal{D}$, $z=tx+(1-t)y$ и выполняются условия
+$$
+f(x)\geq f(z)+\nabla f(z)^T(x - z)+\frac{m}{2}||x-z||^2,~f(y)\geq f(z)+\nabla f(z)^T(y - z)+\frac{m}{2}||y-z||^2,
+$$
+то складывая первое неравенство умноженное на $t$ и второе неравенство умноженное на $1-t$, учитывая $x-z=(1-t)(x-y),~y-z=t(y-x)$ получаем
+\begin{align*}
+tf(x)+(1-t)f(y)&\geq f(z)+t(1-t)\nabla f(z)^T(x-y)+(1-t)t\nabla f(z)^T(y-x)\\
+&+t^2(1-t)\frac{m}{2}||x-y||^2+(1-t)^2t\frac{m}{2}||x-y||^2\\
+&=f(z)+t(1-t)\frac{m}{2}||x-y||^2~~\blacksquare
+\end{align*}
+
+\end{frame}
+
+\begin{frame}{Условия выпуклости первого порядка}
+Другое эквивалентное определение можно получить следующим образом: сложив неравенства
+$$
+f(y)\geq f(x)+\nabla f(x)^T(y-x)+\frac{m}{2}||x-y||^2
+$$
+и
+$$
+f(x)\geq f(y)+\nabla f(y)^T(x-y)+\frac{m}{2}||x-y||^2
+$$
+получаем
+$$
+(\nabla f(x)-\nabla f(y))^T(x - y)\geq m||x-y||^2.
+$$
+\pause
+В обратную сторону: используя формулу Ньютона-Лейбница
+\begin{align*}
+f(y)&=f(x)+\int_0^1\nabla f(x + t(y-x))^T(y-x)dt\\
+&=f(x)+\nabla f(x)^T(y-x) + \int_0^1\underbrace{(\nabla f(x + t(y-x))-\nabla f(x))^T(y-x)}_{\geq tm||y-x||^2}dt\\
+&\geq f(x)+ \nabla f(x)^T(y-x) + \frac{m}{2}||y-x||^2
+\end{align*}
+
+\end{frame}
+
+\begin{frame}{Условия выпуклости второго порядка}
+\begin{theorem_ru}[Условия выпуклости второго порядка]
+Если $f$ дважды дифференцируема, то сильная выпуклость $f$ с параметром $m$ равносильна
+$$
+\nabla^2 f(x)\succeq mI~~\forall x\in \mathcal{D}.
+$$
+\end{theorem_ru}
+\pause
+\textbf{Док-во.} В силу дифференцируемости $f$ и сильной выпуклости $f$ выполняется условие первого порядка
+$$
+(\nabla f(x+t(y-x))-\nabla f(x))^Tt(y - x)\geq mt^2||x-y||^2.
+$$
+\pause
+Делим на $t^2$ и устремляем $t$ к нулю:
+$$
+(y-x)^T\nabla^2 f(x)(y-x)\geq m||x-y||^2=(y-x)^T(mI)(y-x).
+$$
+\end{frame}
+
+\begin{frame}{Условия выпуклости второго порядка}
+В обратную сторону: используя формулу Тейлора с остатком в интегрально форме
+\begin{align*}
+f(y)&=f(x)+\nabla f(x)^T(y-x) + \frac{1}{2}\int_0^1(y-x)^T\nabla^2f(x+t(y-x))(y-x)dt\\
+&\geq f(x)+\nabla f(x)^T(y-x) + \frac{1}{2}\int_0^1 m||y-x||^2dt \\
+&= f(x)+\nabla f(x)^T(y-x) + \frac{m}{2}||y-x||^2~~~\blacksquare
+\end{align*}
+\end{frame}
+
+\begin{frame}{Связь выпуклости множеств и функций}
+\begin{theorem_ru}[О надграфике выпуклой функции]
+Пусть $\mathcal{D}$ -- выпуклое множество.
+$f:\mathcal{D}\subset \mathbb{R}^n\rightarrow \mathbb{R}$ -- выпуклая функция тогда и только тогда, когда множество $\mathbb{G}=\{(x, y)~|~x\in \mathcal{D}, y\in \mathbb{R}, y\geq f(x)\}$ выпукло.
+\end{theorem_ru}
+\pause
+\textbf{Док-во.} 
+Необходимость: для любых точек $(x, y), (u, v)\in \mathbb{G}$ и $0\leq t\leq 1$ получаем
+$$
+ty+(1-t)v\geq tf(x)+(1-t)f(u)\geq f(tx+(1-t)u).
+$$
+\pause
+Следовательно, $t(x,y)+(1-t)(u,v)\in \mathbb{G}$, а значит $\mathbb{G}$ выпукло.\\
+\pause
+Достаточность: для любых точек $x, u \in \mathbb{R}^n$ по определению $(x, f(x)), (u, f(u))\in \mathbb{G}$. Для $0\leq t\leq 1$ из  
+выпуклости $\mathbb{G}$ получаем
+$$
+t(x,f(x))+(1-t)(u,f(u))\in \mathbb{G}
+$$
+из чего следует
+$$
+f(tx + (1-t)u)\leq tf(x)+(1-t)f(u)
+$$
+
+\end{frame}
+
+\begin{frame}{Связь выпуклости множеств и функций}
+\begin{theorem_ru}[О выпуклости множества, заданном неравенством]
+Если $f:\mathcal{D}\subset \mathbb{R}^n\rightarrow \mathbb{R}$ -- выпуклая функция, $\mathcal{D}$ -- выпуклое множество, $c\in \mathbb{R}$, тогда множество $\mathbb{E}=\{x\in \mathcal{D}~|~f(x)\leq c\}$ выпукло.
+\end{theorem_ru}
+\pause
+\textbf{Док-во.} Пусть $x, y\in \mathbb{E}$, тогда для $0\leq t\leq 1$
+$$
+f(tx+(1-t)y)\leq tf(x)+(1-t)f(y)\leq tc+(1-t)c=c,
+$$
+а значит $tx+(1-t)y\in \mathbb{E}$ и, следовательно, $\mathbb{E}$ выпукло.
+\end{frame}
+
+\begin{frame}{Опорная функция}
+\begin{definition_ru}
+Пусть $X$ -- множество со скалярным произведением $\langle \cdot, \cdot \rangle$, $\mathcal{D}\subset X$. \underline{Опорной функцией}
+множества $\mathcal{D}$ называется функция
+$$
+\phi_\mathcal{D}(x):=\sup_{y\in\mathcal{D}}\langle x, y \rangle.
+$$
+\end{definition_ru}
+\end{frame}
+
+\begin{frame}{Представление выпуклых множеств пересечением полупространств}
+\begin{theorem_ru}[О представлении замкнутых выпуклых множеств]
+Пусть $\mathcal{D}\in \mathbb{R}^n$ -- замкнутое выпуклое множество, тогда 
+$$
+\mathcal{D}=\cap_{x\in \mathbb{R}^n}\{y\in \mathbb{R}^n~|~\langle x, y\rangle\leq \phi_\mathcal{D}(x)\}
+$$
+\end{theorem_ru}
+\pause
+\textbf{Док-во.} Если $x\in \mathcal{D}$, то для любого $z\in\mathbb{R}^n$: $\langle z, x\rangle\leq \sup_{y\in\mathcal{D}}\langle z, y\rangle=\phi_\mathcal{D}(z)$, т.~е. $x\in \{y\in \mathbb{R}^n~|~\langle z, y\rangle\leq \phi_\mathcal{D}(z)\}$, а значит $x$ принадлежит соответствующему пересечению.\\
+\pause
+Пусть $x\notin \mathcal{D}$, $\mathcal{D}$ -- замкнуто, то существуют $a\in \mathbb{R}^n, c\in \mathbb{R}$ (разделяющая гиперплоскость) такие, что
+$$
+\left\{\begin{array}{ll}
+\langle a, y \rangle<c~~\forall y\in \mathcal{D},\\
+\langle a, x \rangle>c.
+\end{array}\right.
+$$
+
+\end{frame}
+
+\begin{frame}{Представление выпуклых множеств пересечением полупространств}
+Таким образом
+$$
+\phi_\mathcal{D}(a)=\sup_{y\in\mathcal{D}}\langle a, y\rangle\leq c,
+$$
+а значит $x\notin \{z\in \mathbb{R}^n~|~\langle z, a\rangle \leq \varphi_\mathcal{D}(a)\}$ и, следовательно, $\mathcal{D}$ совпадает с указанным пересечением. $\blacksquare$\\
+\vspace{1em}
+\pause
+\textit{Замечание} 1. В общем случае указанное пересечение задает выпуклую оболочку замыкания множества $\mathcal{D}$.\\
+\vspace{1em}
+\pause
+\textit{Замечение} 2. Если опорные функции двух замкнутых выпуклых множеств совпадают, то совпадают и сами множества.
+
+
+\end{frame}
+
+\begin{frame}{Геометрическая интерпретация опорной функции}
+\centering
+\includegraphics[width=.6\textwidth]{support_function}
+\end{frame}
+
+\begin{frame}{Неявно заданные функции}
+\begin{theorem_ru}[О неявной функции]
+Пусть $f:\mathbb{R}^{n+m}\rightarrow \mathbb{R}^m$, $f$ непрерывно дифференцируема в окрестности $(x^*, y^*)$, $f(x^*, y^*)=0_m$, $|\nabla_y f(x^*, y^*)|\neq 0$, тогда существуют множества $V_x\in \mathbb{R}^n$, $x^*\in V_x$, $V_y\in \mathbb{R}^m$, $y^*\in V_y$ и единственная функция $\varphi:V_x\rightarrow V_y$ такая, что
+$$
+f(x, \varphi(x))=0_m~~\forall x\in V_x.
+$$
+Более того, $\varphi$ непрерывно дифференцируема на $V_x$ и имеет место равенство
+$$
+\nabla \varphi(x)=-[\nabla_y f(x, y)]^{-1}\nabla_x f(x, y).
+$$ 
+\end{theorem_ru}
+\end{frame}
+
+\begin{frame}{Неявно заданные функции}
+\textbf{Док-во.} Индукция по $m$. Для $m=1$ имеем $\nabla_yf(x^*, y^*)\neq 0$, не умаляя общности можно считать, что $\nabla_yf(x^*, y^*)>0$. Из непрерывности $\nabla_yf$ следует, что существует $\epsilon>0$ такое, что $\nabla_yf(x^*,y)>0$ при $|y-y^*|\leq\epsilon$. Следовательно $f(x^*, y-\epsilon)<0<f(x^*,y+\epsilon)$. Пусть $V_y=\{y\in \mathbb{R}~|~|y-y^*|\leq \epsilon\}$. \\
+\pause
+\vspace{1em}
+Из непрерывности $f$ и $\nabla_yf$ следует, что существует $\delta>0$ такое, что $f(x, y-\epsilon)<0<f(x,y+\epsilon)$ и $\nabla_yf(x,y)>0$ при $y\in V_y$, $||x-x^*||\leq \delta$. Пусть $V_x=\{x\in \mathbb{R}^n~|~||x-x^*||\leq \delta\}$.\\
+\pause
+\vspace{1em}
+Зафиксируем $x\in V_x$. Из непрерывности $f$ и строгой монотонности $f(x, \cdot)$ при  следует существование единственной точки $\varphi(x)$ такой, что $f(x, \varphi(x))=0$.\\
+\pause
+\vspace{1em}
+Пусть $x, x+h\in V_x$. По формуле Лагранжа
+\begin{align*}
+0&=f(x+h, \varphi(x+h))-f(x, \varphi(x))\\
+&=\nabla_xf(x', \varphi(x)')^Th+\nabla_yf(x', \varphi(x)')^T(\varphi(x+h)-\varphi(x)),
+\end{align*}
+где $(x', \varphi(x)')$ -- точка на отрезке с концами $(x, \varphi(x))$, $(x+h, \varphi(x+h))$.
+\end{frame}
+
+\begin{frame}{Неявно заданные функции}
+Так как $V_x\times V_y$ -- компакт, а $\nabla_y f$ непрерывна и $\nabla_y f(x,y)>0,~x\in V_x, y\in V_y$, то $\exists \alpha>0:~~\nabla_yf(x, y)\geq \alpha$, а значит
+$$
+|\nabla_yf(x', \varphi(x)')|\cdot|\varphi(x')-\varphi(x)|=||\nabla_xf(x', \varphi(x)')(x'-x)||,
+$$
+$$
+|\varphi(x')-\varphi(x)|\leq \frac{1}{\alpha}||\nabla_xf(x', \varphi(x)')(x'-x)||\xrightarrow{x'\rightarrow x} 0,
+$$
+а значит $\varphi$ непрерывна на $V_x$. \pause Далее
+\begin{align*}
+0&=f(x+th, \varphi(x+th))-f(x, \varphi(x))\\
+&=t
+\nabla_xf(x', \varphi(x)')^Th+\nabla_yf(x', \varphi(x)')^T(\varphi(x+th)-\varphi(x)).
+\end{align*}
+\pause
+Делим на $t$ и устремляем $t$ к нулю 
+$$
+\lim_{t\rightarrow 0}\frac{\varphi(x+th)-\varphi(x)}{t}=-\nabla_yf(x,\varphi(x))^{-1}\nabla_xf(x,\varphi(x))^Th.
+$$
+А значит $\varphi$ непрерывно дифференцируема на $V_x$.
+
+\end{frame}
+
+\begin{frame}{Неявно заданные функции}
+Индукционный переход: так как $|\nabla_yf(x^*,y^*)|\neq 0$, то хотя бы для одного индекса $i$ выполняется $\frac{\partial f_i}{\partial y_1}\neq 0$. Не умаляя общности можно считать, что $i=1$. Из доказанной базы следует, что существует $V_x\in \mathbb{R}^n$, $V_y\subset \mathbb{R}$ и единственная функция $\psi:V_x\rightarrow V_y$ такая, что $f_1(x, \psi(x))=0$.\\
+\vspace{1em}
+\pause
+Обозначим $g(x, y)=(f_2(x,y), \ldots, f_m(x, y))^T$. Из индукционного предположения следует, что существует $V_x'\in \mathbb{R}^n$, $V_y'\subset \mathbb{R}$ и единственная функция $\gamma:V_x'\rightarrow V_y'$ такая, что $g(x, \gamma(x))=0$. Таким образом, мы получаем необходимую функцию $\varphi:V_x\cap V_x'\rightarrow V_y\times V_y'$, 
+$\varphi(x)=\left[\begin{array}{ll}
+\psi(x) \\
+\gamma(x)
+\end{array}\right]$.\\
+\vspace{1em}
+\pause
+Наконец, дифференцируя $f(x, \varphi(x))$ получаем
+$$
+0=\nabla_x(f(x, \varphi(x)))=\nabla_xf(x, \varphi(x))+\nabla_yf(x,\varphi(x))\nabla\varphi(x).
+$$
+$$
+\nabla\varphi(x)=-[\nabla_yf(x, \varphi(x))]^{-1}\nabla_xf(x,\varphi(x)).~~\blacksquare
+$$
+\end{frame}
+
+\begin{frame}{Неявно заданные функции}
+\textit{Замечание}. Если выполняются условия теоремы, то для любого вектора $0_{n+m}\neq(x, y)\in \mathbb{R}^{n+m},~\nabla f(x^*, y^*)\left[\begin{array}{ll}
+x \\ y
+\end{array}\right]=0_m$ существует кривая $\psi:[-a, a]\rightarrow \mathbb{R}^{n+m}, a>0$ такая, что
+$$
+\left\{
+\begin{array}{ll}
+f(\psi(t))=0_m, \\
+\psi(0)=\left[\begin{array}{ll}
+x^* \\ y^*
+\end{array}\right], \\
+\frac{d}{dt}\psi(0)=\left[\begin{array}{ll}
+x \\ y
+\end{array}\right], \\
+\end{array}
+\right.
+$$
+\pause
+\textbf{Док-во.} Пусть $h\in \mathbb{R}^n$, рассмотрим
+$$
+\psi(t)=\left[\begin{array}{ll}
+x^*+th \\ \varphi(x^*+th)
+\end{array}\right]
+$$
+Непосредственной подстановкой получаем $f(\psi(t))=$ $f(x^*+th, \varphi(x^*+th))=0_m$.
+Дифференцируя $\psi(t)$ получаем
+$$
+\nabla\psi_x(t)=h,
+$$
+$$
+\nabla\psi_y(t)=\nabla\varphi(x^*+th)h=-[\nabla_yf(x^*+th, \varphi(x^*+th))]^{-1}\nabla_xf(x^*+th,\varphi(x^*+th))h.
+$$
+\end{frame}
+
+\begin{frame}{Неявно заданные функции}
+Следовательно нужно взять $h=x$. С другой стороны в силу $\nabla f(x^*, y^*)\left[\begin{array}{ll}
+x \\ y
+\end{array}\right]=0_m$ получаем
+$$
+y=-[\nabla_yf(x^*, y^*)]^{-1}\nabla_xf(x^*, y^*)x,
+$$
+что совпадает с $\nabla \psi_y(0)$. \\
+\pause
+С другой стороны, если такая кривая существует, то дифференцируя по $t$ равенство $f(\psi(t))=0_m$ получаем
+$$
+0_m=\left.\frac{d}{dt}f(\psi(t))\right|_{t=0}=\nabla f(\psi(0))\nabla\psi(0)=\nabla f(x^*, y^*)\left[\begin{array}{ll}
+x \\ y
+\end{array}\right].
+$$
+\end{frame}
+
+\begin{frame}{Ссылки на литературу}
+\href{http://premolab.ru/pub_files/pub5/MnexoB89z7.pdf}{\textit{Нестеров Ю. Е.} 
+Методы выпуклой оптимизации} // парагаф 2.1.3 \\
+\vspace{1em}
+\href{https://web.stanford.edu/~boyd/cvxbook/bv_cvxbook.pdf}{\textit{Boyd S., Vandenberghe L.} 
+Convex optimization} // парагафы 3.1, 9.1.2 \\
+\end{frame}
+
+\end{document}

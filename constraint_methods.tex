@@ -1,0 +1,270 @@
+\documentclass[10pt, handout]{beamer}
+\usetheme{Madrid}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage[OT1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\author{Мальковский Н.~В.}
+\title[Задачи с ограничениями]{Методы оптимизации в задачах с ограничениями}
+%\setbeamercovered{transparent} 
+\setbeamertemplate{navigation symbols}{} 
+%\logo{} 
+\institute[СПбАУ]{Санкт-Петербургский академический университет}
+\date{} 
+%\subject{} 
+\usecolortheme{beaver}
+
+
+\DeclareMathOperator{\argmin}{argmin}
+\DeclareMathOperator{\interior}{Int}
+\DeclareMathOperator{\lin}{Span}
+
+%\setbeamertemplate{theorems}[numbered]
+
+\newcounter{thm}
+\newcounter{lm}
+\newcounter{def}
+
+
+\newtheorem{theorem_ru}[thm]{Теорема}
+\newtheorem{lemma_ru}[lm]{Лемма}
+\newtheorem{corollary_ru}{Следствие}[]
+\newtheorem{definition_ru}{Определение}[def]
+
+\graphicspath{{image/}}
+\newcommand{\Ima}{\text{Im}}
+\newcounter{remarknumber}[framenumber]
+\newcommand{\remark}{\stepcounter{remarknumber}\textit{Замечание}~\arabic{remarknumber}}
+
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\centering
+\includegraphics[width=.23\textwidth]{logo.png}
+\end{frame}
+
+\begin{frame}{Преамбула}
+Общая задача минимизации
+\begin{equation}\label{general_formulation}
+\begin{array}{ll}
+\mbox{минимизировать } & f(x),\\
+\mbox{при условии } & x\in \mathcal{K}.
+\end{array}
+\end{equation}
+\pause
+Условия стационарности
+\begin{theorem_ru}
+Пусть в задаче \eqref{general_formulation} множество $\mathcal{K}$ выпукло, а функция $f$ дифференцируема в точке $x^*$, тогда для точки минимума $x^*$ выполняется условие
+$$
+\nabla f(x^*)^T(x-x^*)\geq 0,~~\forall x\in \mathcal{K}.
+$$
+\end{theorem_ru}
+\end{frame}
+
+\begin{frame}{Проекция шага градиентного спуска}
+\textbf{Следствие}. Если $\mathcal{K}$ -- замкнутое выпуклое множество, $P_\mathcal{K}(x)=\argmin_{y\in\mathcal{K}}||y-x||^2$ -- евклидова проекция на
+$\mathcal{K}$, $\alpha>0$, то для точки минимума $x^*$ функции $f$ на $\mathcal{K}$ выполняется
+$$
+x^*=P_\mathcal{K}(x^*-\alpha\nabla f(x^*)).
+$$
+\pause
+\textbf{Док-во.} Два случая:
+\begin{enumerate}
+\item $\nabla f(x^*)=0_n$, в этом случае $x^*=x^*-\alpha\nabla f(x^*)=P_\mathcal{D}(x^*-\alpha\nabla f(x^*))$.
+\item $\nabla f(x^*)\neq 0_n$. Пусть $z=x^*-\alpha\nabla f(x^*)$, тогда при $||y-z||\leq \alpha ||\nabla f(x^*)||$
+\begin{align*}
+\nabla f(x^*)^T(y-x^*) &= \nabla f(x^*)^T(y-z-\alpha\nabla f(x^*))\\
+&=\nabla f(x^*)^T(y-z)-\alpha ||\nabla f(x^*)||^2\\
+&\leq ||\nabla f(x^*)||\cdot \alpha ||\nabla f(x^*)||-\alpha ||\nabla f(x^*)||^2\leq 0.
+\end{align*}
+Так как единственная точка, для которой достигается равенство --  $x^*$, а для всех точек $\mathcal{K}$ выполняется неравенство в обратную сторону,
+то $x^*$ -- единственная точка $\mathcal{K}$, для которой выполняется $||x^*-z||\leq \alpha ||\nabla f(x^*)||$, таким образом $x^*=P_\mathcal{K}(z)$.~~~$\blacksquare$
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Проективный градиентный спуск}
+Простая адаптация метода градиентного спуска для задач на ограниченных множествах:
+\begin{equation}\label{projected_gradient_descent}
+x_{k+1}=P_\mathcal{K}(x_k-\alpha_k \nabla f(x_k)).
+\end{equation}
+\pause
+Такой метод отыскания точки минимума называется \underline{методом проекции градиента} или \underline{проективным градиентным спуском}. В случае, когда
+$\mathcal{K}$ -- замкнутое выпуклое множество, основные свойства градиентного спуска сохраняются и при использовании проективного метода.
+\end{frame}
+
+\begin{frame}{Свойства оператора проекции}
+Пусть $\mathcal{K}$ -- замкнутое выпуклое множество, $P_\mathcal{K}$ -- евклидова проекция на $\mathcal{K}$, тогда
+\pause
+\begin{itemize}[<+->]
+\item[1.] $(P_\mathcal{K}(x)-x)^T(y-P_\mathcal{K}(x))\geq 0~~y\in \mathcal{K}$.
+\item[2.] $||P_\mathcal{K}(x)-P_\mathcal{K}(y)||\leq ||x-y||$.
+\end{itemize}
+\pause
+\textbf{Док-во}. По определению $P_\mathcal{K}(x)=\argmin_{y\in\mathcal{K}}||y-x||^2$. Из условий стационарности
+$$
+\nabla [||y-x||^2]_{y=P_\mathcal{K}(x)}^T(z-P_{\mathcal{K}}(x))\geq 0~~ \forall z\in \mathcal{K}.
+$$
+Первый пункт напрямую следует из этого неравенства и $\nabla[||y-x||^2]_{y=P_\mathcal{K}(x)}=P_\mathcal{K}(x)-x$.\\
+\end{frame}
+
+\begin{frame}{Свойства оператора проекции}
+Используя свойство $1$ получаем
+\begin{align*}
+(P_\mathcal{K}(x)-x)^T(P_\mathcal{K}(y)-P_\mathcal{K}(x))\geq 0 \\
+(P_\mathcal{K}(y)-y)^T(P_\mathcal{K}(x)-P_\mathcal{K}(y))\geq 0
+\end{align*}
+\pause
+Вычитая первое из второго получаем
+$$
+(P_\mathcal{K}(y)-P_\mathcal{K}(x)-(y-x))^T(P_\mathcal{K}(x)-P_\mathcal{K}(y))\geq 0,
+$$
+$$
+(x-y)^T(P_\mathcal{K}(x)-P_\mathcal{K}(y))\geq ||P_\mathcal{K}(x)-P_\mathcal{K}(y)||^2.
+$$
+\pause
+Применяя неравенство Коши-Буняковского-Шварца получаем свойство $2$. ~~$\blacksquare$
+
+\end{frame}
+
+\begin{frame}{Анализ сходимости}
+\begin{theorem_ru}
+Пусть $f:\mathcal{D}\subset\mathbb{R}^n\rightarrow \mathbb{R}$, $\mathcal{K}\subset \mathcal{D}$, $f$ дважды дифференцируема при этом $mI\preceq \nabla^2 f(\cdot) \preceq MI$ на $\mathcal{K}$, $0<\alpha\leq\frac{2}{M+m}$, тогда для последовательности $x_k$, генерируемой по правилу \eqref{projected_gradient_descent},
+выполняется
+$$
+||x_k-x^*||\leq \left(1-\alpha m\right)^k||x_0-x^*||
+$$
+\end{theorem_ru}
+\end{frame}
+
+\begin{frame}{Анализ сходимости}
+\textbf{Док-во.} 
+\begin{align*}
+||x_{k+1}-x^*||&=\left\|P_\mathcal{K}\left(x_k-\alpha\nabla f(x_k)\right)-P_\mathcal{K}\left(x^*-\alpha\nabla f(x^*)\right)\right\|\\
+&\leq \left\|x_k-x^*-\alpha(\nabla f(x_k)-\nabla f(x^*) \right\|\\
+&=\left\|x_k-x^*-\alpha\int_0^1\nabla^2f(x^*+t(x_k-x^*))(x_k-x^*)dt\right\|\\
+&\leq ||x_k-x^*||~\cdot~\left\|I-\alpha\underbrace{\int_0^1\nabla^2f(x^*+t(x_k-x^*))dt}_{A_k}\right\|
+\end{align*}
+\pause
+По условию $mI\preceq A_k\preceq MI$, таким образом если сходимость имеет место при $\alpha<\frac{2}{M}$. Если при этом $\alpha<\frac{2}{M+m}$, то
+спектр матрицы $I-\alpha A_k$ лежит на отрезке $[1-\alpha M, 1-\alpha m]$, при этом $|1-\alpha m|>|1-\alpha M|$, что дает
+$$
+||x_{k+1}-x^*||\leq (1-\alpha m) ||x_k-x^*||~~~\blacksquare
+$$
+\end{frame}
+
+\begin{frame}{Оптимальная схема проективного градиентного спуска}
+По аналогии с оптимальными схемами градиентного спуска можно построить схему для проективного случая с линейной сходимостью с показателем
+$\frac{\sqrt{M}-\sqrt{m}}{\sqrt{M}+\sqrt{m}}$:
+\begin{description}
+\item[Инициализация] Выбрать начальное приближение $x_0\in \mathcal{K}$, $\alpha_0\in(0,1)$. Взять $y_0=x_0$.
+\item[Итерация $k\leq 0$] ~\\
+\begin{itemize}
+\item[1.] Вычислить $\nabla f(y_k)$, взять $x_{k+1}=P_\mathcal{K}(y_k-\frac{1}{M}\nabla f(y_k))$.
+\item[2.] Вычислить $\alpha_{k+1}$ из уравнения $$\alpha_{k+1}^2=(1-\alpha_{k+1})\alpha_k^2+\frac{m}{M}\alpha_{k+1}$$
+\item[3.] Взять
+$$
+\beta_k=\frac{\alpha_k(1-\alpha_k)}{\alpha_k^2+\alpha_{k+1}},~~~y_{k+1}=x_{k+1}+\beta_k(x_{k+1}-x_k).
+$$
+\end{itemize}	
+\end{description}
+
+\end{frame}
+
+\begin{frame}{Барьерные функции}
+\begin{definition_ru}
+\underline{Барьерной функцией} замкнутого множества $\mathcal{K}$ называется любая функция $f:\interior\mathcal{K}\rightarrow \mathbb{R}$, удовлетворяющая
+\begin{align*}
+f(x)\xrightarrow{x\rightarrow \mathcal{K}\setminus \interior \mathcal{K}}+\infty \\
+\end{align*}
+\end{definition_ru}
+\pause
+\textit{Замечание} Барьерная функция множества является приближением функции-индикатора этого множества.
+\end{frame}
+
+\begin{frame}{Центральный путь}
+Рассмотрим задачу \eqref{general_formulation}. Пусть $F$ -- барьер $\mathcal{K}$. Посмотрим на вспомогательную задачу оптимизации с параметром $t$
+\begin{equation}\label{barrier_problem}
+\mbox{минимизировать } ~~ f(x)+\frac{1}{t}F(x)
+\end{equation}
+\pause
+\begin{definition_ru}
+\underline{Центральным путем} задачи \eqref{general_formulation} и барьера $F$ называется кривая $\varphi:[0, +\infty)\rightarrow\interior\mathcal{K}$
+$$
+\varphi(t)=\argmin_{x\in\interior\mathcal{K}}f(x)+\frac{1}{t}F(x)
+$$
+\end{definition_ru}
+\pause
+\textit{Замечание}. Чем больше $t$, тем меньше второе слагаемое влияет на точку минимума \eqref{barrier_problem}.
+\end{frame}
+
+\begin{frame}{Центральный путь}
+\begin{theorem_ru}
+Пусть $\varphi$ -- центральный путь задачи \eqref{general_formulation} с барьером $F$, $F(x)\geq F^*>-\infty$, $x^*$ -- решение \eqref{general_formulation}, тогда
+$$
+f(\varphi(t))\xrightarrow{t\rightarrow +\infty}f(x^*).
+$$
+\end{theorem_ru}
+\pause
+\textbf{Док-во.} Пусть $x\in \interior\mathcal{K}$, тогда
+$$
+\overline{\lim_{t\rightarrow\infty}}f(\varphi(t))\leq \lim_{t\rightarrow\infty}\left[f(x)+\frac{1}{t}F(x)\right]=f(x).
+$$
+Переходя к супремуму и пользуясь непрерывностью $f$ получаем $\overline{\lim_{t\rightarrow\infty}}f(\varphi(t))\leq f(x^*)$.\\
+\pause
+С другой стороны
+$$
+f(\varphi(t))=\min_{x\in\mathcal{K}}\left\{f(x)+\frac{1}{t}F(x)\right\}\geq\min_{x\in\mathcal{K}}\left\{f(x)+\frac{1}{t}F^*\right\}=f(x^*)+\frac{1}{t}F^*.~~\blacksquare
+$$
+
+\end{frame}
+
+\begin{frame}{Стандартные барьеры}
+Пусть множество $\mathcal{K}$ задано неравенством $g(x)\leq 0_m$. Барьерными функциями этого множества могут служить следующие:
+\pause
+\begin{itemize}
+\item Степенной барьер: $p>1$
+$$
+F(x)=\sum_{i=1}^m\frac{1}{(-g_i(x))^p}
+$$
+\item Логарифмический барьер:
+$$
+F(x)=\sum_{i=1}^m-\ln(-g_i(x))
+$$
+\item Экспоненциальный барьер:
+$$
+F(x)=\sum_{i=1}^m\exp\left(\frac{1}{-g_i(x)}\right)
+$$
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Барьерный метод}
+Общая схема барьерного метода для задачи \eqref{general_formulation} имеет следующий вид
+\pause
+\begin{itemize}[<+->]
+\item[1.] Выбрать последвательность $t_0<t_1<\ldots$ такую, что $t_k\rightarrow\infty$.
+\item[2.] Вычислить $x_k=\varphi(t_k)$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Методы внутренней точки}
+На практике вычисление точного значения $\varphi(t)$ невозможно (лишь с заданной точностью). Обычно вместо
+общей схемы барьерного метода попеременно меняется $t_k\rightarrow t_{k+1}$ и делается шаг в сторону оптимума $\varphi(t_{k+1}$):\\
+\vspace{1em}
+\pause
+Итерация $k=1, 2, \ldots$:
+\begin{itemize}[<+->]
+\item $x_{k+1}=update(x_k, f, g, F)$
+\end{itemize}
+\pause
+\vspace{1em}
+\textit{Замечание}. В \underline{методах внутренней точки} в качестве $update$ обычно используется шаг метода Ньютона для $f(x_k)+\frac{1}{t_k}F(x_k)$.
+Важно отметить, что для логарифмического барьера шаг Ньютона гарантирует, что $x_{k+1}\in\mathcal{K}$. 
+\end{frame}
+
+\end{document}

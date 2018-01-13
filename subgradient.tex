@@ -1,0 +1,623 @@
+\documentclass[10pt, handout]{beamer}
+\usetheme{Madrid}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage[OT1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\author{Мальковский Н.~В.}
+\title[Субградиентный спуск]{Субградиентный спуск}
+%\setbeamercovered{transparent} 
+\setbeamertemplate{navigation symbols}{} 
+%\logo{} 
+\institute[СПбAУ]{Санкт-Петербургский академический университет}
+\date{} 
+%\subject{} 
+
+\DeclareMathOperator{\argmin}{argmin}
+\DeclareMathOperator{\interior}{Int}
+\DeclareMathOperator{\conv}{Conv}
+\DeclareMathOperator*\uplim{\overline{lim}}
+
+
+\newtheorem{theorem_ru}{Теорема}[]
+\newtheorem{lemma_ru}{Лемма}[]
+\newtheorem{corollary_ru}{Следствие}[]
+\newtheorem{definition_ru}{Определение}[]
+
+
+\graphicspath{{image/}}
+\newcommand{\Ima}{\text{Im}}
+\newcounter{remarknumber}[framenumber]
+\newcommand{\remark}{\stepcounter{remarknumber}\textit{Замечание}~\arabic{remarknumber}}
+
+\usecolortheme{beaver}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\centering
+\includegraphics[width=.23\textwidth]{logo.png}
+\end{frame}
+
+%\begin{frame}
+%\tableofcontents
+%\end{frame}
+
+\begin{frame}{Общая идея субградиента}
+Для произвольной дифференцируемой выпуклой функции $f$ выполняется
+$$
+f(y)\geq f(x)+\nabla f(x)^T(y-x).
+$$
+\pause
+Градиентный спуск
+$$
+x_{k+1}=x_k-\alpha_k\nabla f(x_k).
+$$
+При правильном выборе $\alpha_k$ последовательность сходится.\\
+\vspace{1cm}
+\pause
+На самом деле вместо $\nabla f(x_k)$ можно выбирать любой вектор $g$ такой, что
+$$
+f(y)\geq f(x_k)+g_k^T(y-x_k).
+$$
+\pause
+
+Выпуклая функция не обязана быть дифференцируемой, но обязана иметь хотя бы один такой
+вектор $g$ в любой точке $x$. 
+\end{frame}
+
+\begin{frame}{Определение субградиента}
+\begin{definition_ru}
+Пусть $f:\mathcal{D}\rightarrow \mathbb{R}$. Вектор $g$ называется \underline{субградиентом} функции $f$ в точке $x\in\mathcal{D}$, если $\forall y
+\in \mathcal{D}$ выполняется
+$$
+f(y)\geq f(x)+g^T(y-x).
+$$ 
+\end{definition_ru}
+\begin{definition_ru}
+\underline{Субдифференциалом} $f$ в точке $x$ называется множество всех субградиентов $f$ в точке $x$ и обозначается $\partial f(x)$.
+\end{definition_ru}
+\end{frame}
+
+\iffalse
+\begin{frame}{Геометрические свойства субградиента}
+\only<1-1>{
+\centering
+\includegraphics[width=.7\textwidth]{gradient_support.pdf}\\
+Опорные прямые для эпиграфа дифференцируемой выпуклой функции.
+}
+\only<2-2>{
+\centering
+\includegraphics[width=.6\textwidth]{subgradient_support.pdf}\\
+Опорные прямые для эпиграфа произвольной выпуклой функции.
+}
+\only<3-3>{
+\centering
+\includegraphics[width=.7\textwidth]{gradient_sublevels.pdf}\\
+Опорные прямые для множества, ограниченного дифференцируемой выпуклой функцией.
+}
+\only<4-4>{
+\centering
+\includegraphics[width=.5\textwidth]{subgradient_sublevels.pdf}\\
+Опорные прямые для множества, ограниченного произвольной выпуклой функцией.
+}
+\end{frame}
+\fi
+%\iffalse
+\begin{frame}{Геометрические свойства субградиента}
+\centering
+\includegraphics[width=.7\textwidth]{gradient_support.pdf}\\
+Опорные прямые для эпиграфа дифференцируемой выпуклой функции.
+\end{frame}
+\begin{frame}{Геометрические свойства субградиента}
+\centering
+\includegraphics[width=.6\textwidth]{subgradient_support.pdf}\\
+Опорные прямые для эпиграфа произвольной выпуклой функции.
+\end{frame}
+\begin{frame}{Геометрические свойства субградиента}
+\centering
+\includegraphics[width=.7\textwidth]{gradient_sublevels.pdf}\\
+Опорные прямые для множества, ограниченного дифференцируемой выпуклой функцией.
+\end{frame}
+\begin{frame}{Геометрические свойства субградиента}
+\centering
+\includegraphics[width=.5\textwidth]{subgradient_sublevels.pdf}\\
+Опорные прямые для множества, ограниченного произвольной выпуклой функцией.
+\end{frame}
+
+%\fi
+
+\begin{frame}{Пример: выпуклые кусочно-линейные функции}
+\begin{columns}
+\begin{column}{.5\textwidth}
+$$
+f(x)=|x|=\max\{x, -x\}
+$$
+\includegraphics[width=\textwidth]{subgradient_modulus.pdf}
+$$
+\partial f(x)=\begin{cases}
+\{1\}, & x > 0\\
+[-1, 1], & x=0\\
+\{-1\}, & x < 0
+\end{cases}
+$$
+\end{column}
+\begin{column}{.5\textwidth}
+$$
+f(x)=\max_{1\leq i\leq m}a_ix+b_i
+$$
+\includegraphics[width=\textwidth]{subgradient_linearmax.pdf}
+$$
+\partial f(x)=\left[\min_{i\in I(x)}a_i;\max_{i\in I(x)}a_i\right]
+$$
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Свойства субградиента}
+1. Если $f$ выпукла и замкнута на $\mathcal{D}$, то $\forall x\in\interior\mathcal{D}$ $\partial f(x)$ -- непустое замкнутое выпуклое множество.\\
+\vspace{1em}\pause
+\textbf{Док-во.} Если $f$ выпукла на $\mathcal{D}$, то эпиграф $f$ -- выпуклое множество, тогда в точке $(x, f(x))$ существует опорная гиперплоскость c нормалью $(g, h), 0\neq h\in \mathbb{R}, g\in\mathbb{R}^n$:
+$$
+\forall y\in \mathcal{D}, \tau\geq f(y):~~h(\tau-f(x))+g^T(y-x)\geq 0.
+$$
+Не умаляя общности можно считать, что $h^2+||g||^2=1$. Так как $\tau$ можно взять бесконечно большим, то
+для выполнения этого неравенства необходимо $h\geq 0$.\\
+\pause
+Так как $f$ замкнута и выпукла, то в некоторой окрестности $V_x$ точки $x$ она удовлетворяет условию Липшица:
+$$
+f(y)-f(x)\leq M||y-x||,~~y\in V_x,
+$$
+что дает при $y\in V_x$
+$$
+-g^T(y-x)\leq h(f(y)-f(x))\leq hM||y-x||.
+$$
+
+\end{frame}
+
+\begin{frame}{Свойства субградиента}
+Взяв $y=x-\epsilon g$ получаем $||g||^2\leq Mh||g||$, что, учитывая $||g||^2+h^2=1$, дает
+$$
+h\geq \frac{1}{\sqrt{1+M^2}}>0,
+$$
+а значит $-\frac{1}{h}g$ -- субградиент $f$ в точе $x$.\\
+\pause
+\vspace{1em}
+С другой стороны, если $g\in \partial f(x)$, то при $y=x-\epsilon g / ||g||\in V_x$
+$$
+\epsilon ||g||=g^T(y-x)\leq f(y)-f(x)\leq M||y-x||=M\epsilon,
+$$
+что дает ограниченность $\partial f(x)$. Выпуклость и замкнутость легко проверяются по определению. $\blacksquare$\\
+\pause
+\vspace{1em}
+\textit{Замечание}. Функция $f(t)=-\sqrt{t}$ задана на $\mathcal{D}=\{t\geq 0\}$, выпукла и замкнута, но при этом
+в точке $t=0$ субдифференциал пуст.
+\end{frame}
+
+\begin{frame}{Свойства субградиента}
+2. Если $f$ выпукла и дифференцируема на $\mathcal{D}$, то при $x\in\mathcal{D}:~~\partial f(x)=\{\nabla f(x)\}$.\\
+\pause
+\vspace{1em}
+\textbf{Док-во.} Очевидным образом $\nabla f(x)\in \partial f(x)$. С другой стороны, если $g\in \partial f(x)$, то
+$$
+f(y)=f(x)+\nabla f(x)^T(y-x)+o(||y-x||)\geq f(x)+g^T(y-x),
+$$
+$$
+(\nabla f(x)-g)^T(y-x)\geq o(||y-x||).
+$$
+Последнее неравенство может быть выполнено только если $g=\nabla f(x)$.~~$\blacksquare$\\
+\end{frame}
+
+\begin{frame}{Свойства субградиента}
+3. Пусть $\mathcal{D}\in \mathbb{R}^n, \mathcal{B}\in \mathbb{R}^m$, 
+$f:\mathcal{D}\times\mathcal{B}\rightarrow \mathbb{R}$ -- выпуклая функция, 
+$x\in \mathcal{D}, y\in\mathcal{B}$, тогда функция
+$$
+\phi_x(y)=f(x, y)
+$$
+выпукла и при этом если $(g, h)\in \partial f(x, y)$, то $h\in \partial \phi_x(y)$.\\
+\pause
+\vspace{1em}
+\textbf{Док-во.}
+\begin{align*}
+\phi_x(z)=f(x, z)&\geq f(x, y)+g^T(x-x)+h^T(z-y)\\
+&=\phi_x(y)+h^T(z-y)~~\blacksquare
+\end{align*}
+\pause
+Далее будем обозначать $\partial_y f(x,y)=\partial \phi_x(y)$. Стоит отметить, что в отличии от дифференцирования, 
+если $g\in \partial_x f(x,y)$, $h\in \partial_y f(x,y)$, то это еще не значит, что $(g,h)\in \partial f(x,y)$ 
+(например $f(x)=||x||_2$ при $x=0_n$). Стоит однако отметить, что  $\forall h\in\partial_y f(x,y)~\exists g\in\partial_xf(x,y)$ такое, 
+что $(g, h)\in\partial f(x,y)$.
+\end{frame}
+
+\begin{frame}{Свойства субградиента}
+4. Обозначим за $f'(x;p)$ -- производную $f$ в точке $x$ по направлению $p$, т.е.
+$$
+f'(x;p)=\lim_{\alpha\rightarrow 0+}\frac{f(x+\alpha p)-f(x)}{\alpha}.
+$$
+Если $f$ выпукла на $\mathcal{D}$, то для $x\in \interior \mathcal{D}$ $f'(x;p)$ существует и
+$$
+f'(x;p)=\sup_{g\in \partial f(x)}g^Tp.
+$$
+\pause
+\textbf{Док-во.} Пусть $x\in\interior\mathcal{D}$, обозначим $\varphi(p)=f'(x;p)$. Если $g\in \partial f(x)$, то
+$$
+f(x+\alpha p)\geq f(x)+\alpha g^Tp.
+$$
+Следовательно, учитывая $\varphi(0)=0$, $\partial f(x)\subset \partial \varphi(0)$. Далее, если $g\in \partial \varphi(0)$, то
+$$
+f(x+p)\geq f(x)+\varphi(p)\geq f(x)+g^Tp.
+$$
+Следовательно $\partial \varphi(0)\subset \partial f(x)$ (Первое неравенство и существование $f'(x, p)$ без доказательства).
+\end{frame}
+
+\begin{frame}{Свойства субградиента}
+Рассмотрим $g_p\in \partial \varphi(p)$, $\alpha>0$, тогда
+$$
+\alpha \varphi(y)=\varphi(\alpha y)\geq \varphi(p)+g_p^T(\alpha y-p).
+$$
+\pause
+Устремляя $\alpha\rightarrow\infty$ получаем
+$$
+\varphi(y)\geq g_p^Ty=\varphi(0)+g_p^Ty.
+$$
+Следовательно, $g_p\in \partial \varphi(0)$. \pause Устремляя $\alpha\rightarrow 0$ получаем
+$$
+\varphi(p)-g_p^Tp\leq 0.
+$$
+Но раз $g_p\in \partial f(x)$, то
+$$
+\varphi(p)=\lim_{\alpha\rightarrow 0+}\frac{f(x+\alpha p)-f(x)}{\alpha}\geq g_p^Tp.
+$$
+Значит,
+$$
+g_p^Tp=\sup_{g\in \partial f(x)}g^Tp=\max_{g\in \partial f(x)}g^Tp=f'(x,p).~~\blacksquare
+$$
+\end{frame}
+
+\begin{frame}{Свойства субградиента}
+5. Если $f_1, f_2$ выпуклы на $\mathcal{D}$, $f=\alpha f_1+\beta f_2$, то $\partial f(x)=\alpha\partial f_1(x)+\beta \partial f_2(x)$.\\
+\vspace{1em}
+\pause
+\textbf{Док-во.} В силу линейности производной по направлению
+\begin{align*}
+f'(x;p)&=\max_{g\in \partial f(x)}g^Tp=\alpha\max_{g\in\partial f_1(x)}g^Tp+\beta\max_{g\in \partial f_2(x)}g^Tp\\
+&=\max_{g\in \alpha\partial f_1(x)+\beta \partial f_2(x)}g^Tp.
+\end{align*}
+\pause
+Таким образом опорные функции $\partial f(x)$ и $\alpha\partial f_1(x)+\beta\partial f_2(x)$ совпадают. Следовательно, совпадают и сами множества.~~$\blacksquare$
+\end{frame}
+
+\begin{frame}{Свойства субградиента}
+6. Если $f_1, \ldots, f_m$ -- выпуклые функции, то для функции $f(x)=\max_{1\leq i\leq m}f_i(x)$ выполняется
+$$
+\partial f(x)=\conv\cup_{i\in I(x)}\partial f_i(x),
+$$
+где $I(x)=\{i~|~f_i(x)=f(x)\}$, $\conv X$ -- выпуклая оболочка множества $X$. \\
+\pause
+\vspace{1em}
+\textbf{Док-во.} Для простоты полагаем, что $I(x)=\{1, \ldots, k\}$.
+\begin{align*}
+f'(x; p)&=\max_{i\in I(x)}f_i'(x;p)\\
+&=\max_{1\leq i\leq k}\max_{g_i\in \partial f_i(x)}g_i^Tp\\
+&=\max_{\alpha\in \Delta_k}\left\{\sum_{i=1}^k\alpha_i\max_{g_i\in \partial f_i(x)}g_i^Tp\right\}\\
+&=\max_{\alpha\in \Delta_k,~g_i\in \partial f_i(x)}\left\{\sum_{i=1}^k\alpha_ig_i^Tp\right\}\\
+&=\max_{\alpha\in \Delta_k,~g\in \sum_{i=1}^k\alpha_i\partial f_i(x)}\{g^Tp\}=\max_{g\in\conv\cup_{i\in I(x)}\partial f_i(x)}\{g^Tp\}. ~~\blacksquare
+\end{align*}
+\end{frame}
+
+\begin{frame}{Свойства субградиента}
+7. Если $x^*\in \interior\mathcal{D}$, то $x^*$ является точкой минимума $f$ на $\mathcal{D}$ тогда и только тогда, когда $0_n\in\partial f(x^*)$.\\
+\vspace{1em}
+\pause
+\textbf{Док-во.} Эквивалентность полностью описывается следующим неравенством
+$$
+f(x)\geq f(x^*)+0_n^T(x-x^*).~~\blacksquare
+$$
+\end{frame}
+
+\begin{frame}{Свойства субградиента}
+8. $f$ -- непрерывна по Липшицу с константой $M$ тогда и только тогда, когда $\forall x\in\mathcal{D},~\forall g\in \partial f(x):~||g||\leq M$.\\
+\pause
+\vspace{1em}
+\textbf{Док-во.} (Необходимость) Очевидным образом, если для некоторого $x$ существует $g\in\partial f(x),~||g||>M$, то для $y=x+\alpha g$ имеем
+$$
+f(y)-f(x)\geq g^T(y-x)=|\alpha|||g||^2> M||y-x||.
+$$
+\vspace{1em}
+\pause
+(Достаточность) Если $g\in \partial f(x)$, то
+$$
+f(x)-f(y)\leq g^T(x-y)\leq ||g||\cdot ||y-x||\leq M||y-x||.~~\blacksquare
+$$
+\end{frame}
+
+\begin{frame}{Пример: $l_1$ и $l_2$ нормы}
+\begin{columns}
+\begin{column}{.5\textwidth}
+$$
+f(x)=||x||_1=\max_{s\in\{-1, 1\}^n}s^Tx
+$$
+Очевидным образом, если $s^Tx=p^Tx$ при $s, p\in\{-1, 1\}^n$, то $x_i\neq 0$ $\Rightarrow$  $p_i=s_i$. Таким образом $\partial f(x)=J_1(x)\times\ldots\times J_m(x)$, где
+$$
+J_i(x)=\begin{cases}
+\{1\}, & x_i > 0\\
+[-1, 1], & x_i=0\\
+\{-1\}, & x_i < 0
+\end{cases}
+$$
+\end{column}
+\begin{column}{.5\textwidth}
+$$
+f(x)=||x||_2=\sqrt{\sum_{i=1}^nx_i^2}
+$$
+$f$ дифференцируема во всех точках кроме $0_n$, следовательно, если $x\neq 0_n$, то $\partial f(x)=\{\nabla f(x)\}=\left\{\frac{x}{||x||_2}\right\}$. Для $0_n$ имеем
+$$
+f(0_n;p)=\lim_{\alpha\rightarrow 0+}\frac{||\alpha p||_2}{\alpha}=||p||_2,
+$$
+что является опорной функцией единичного шара. Следовательно, $\partial f(0_n)=\{x~|~||x||_2\leq 1\}$.
+
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Субградиент математического ожидания}
+Пусть $F:\mathcal{D}\times \Omega\rightarrow \mathbb{R}$, $F$ выпукла по первому аргументу, $\omega$ -- некоторая случайная величина на $\Omega$. Рассмотрим функцию
+$$
+f(x)=E_\omega F(x, \omega).
+$$
+\pause
+\begin{itemize}[<+->]
+\item $f$ -- выпукла.
+\item 
+$E_\omega \partial_x F(x, \omega)\subset \partial f(x)$
+\end{itemize}
+\pause
+Если $g:\Omega\rightarrow \partial_x F(x,\omega)$, то $E_\omega g(\omega)\in \partial f(x)$:
+$$
+F(y, \omega)\geq F(x,\omega)+g^T(\omega)(y-x)
+$$
+Взяв математическое ожидание от обоих частей неравенства получаем вложенность субградиента и его непустоту (а следовательно и выпуклость).
+\end{frame}
+
+\begin{frame}{Субградиент поточечного супремума}
+Пусть $F:\mathcal{D}\times Y\rightarrow \mathbb{R}$ выпукла по первому аргументу. Рассмотрим
+$$
+f(x)=\sup_{y\in Y}F(x, y)
+$$
+Ранее рассматривался случай конечного $Y$, для произвольного же выполняется 
+$$
+\conv\bigcup_{F(x,y)=f(x)}\partial_x F(x, y)\subset \partial f(x)
+$$
+В частности, если $F(x, y)=f(x)$, то $\partial_x F(x,y)\subset \partial f(x)$.
+\end{frame}
+
+\begin{frame}{Субградиент поточечного инфиума}
+Пусть $F:\mathcal{D}\times Y\rightarrow \mathbb{R}$ выпукла (по $(x, y)$). Рассмотрим
+$$
+f(x)=\inf_{y\in Y}F(x, y)
+$$
+\pause
+Покажем, как найти хотя бы один субградиент: пусть $f(x^*)=F(x^*, y^*)$ для некоторых $x^*, y^*$. Так как $F(x^*, y^*)=\inf_{y\in Y}F(x^*,y)$, то $0_Y\in\partial_y F(x^*, y^*)$, следовательно существует $\underline{(g,0_Y)\in \partial F(x^*,y^*)}$, \pause таким образом
+\begin{align*}
+F(x,y)\geq F(x^*, y^*)+g^T(x-x^*)+0^T_Y(y-y^*).
+\end{align*}
+\pause
+Минимизируя по $y$ левую часть (правая не зависит от $y$) и учитывая $f(x^*)=F(x^*, y^*)$ получаем
+$$
+f(x)\geq f(x^*)+g^T(x-x^*) 
+$$
+\textit{Замечание.} Нахождение субградиента предполагает достижимость инфиума, т.е. фактически $f(x)=\min_{y\in Y}F(x, y)$.
+\end{frame}
+
+\begin{frame}{Условия ККТ и субградиент}
+Пусть $f:\mathcal{D}\subset \mathbb{R}^n\rightarrow \mathbb{R}$, $g:\mathcal{D}\rightarrow \mathbb{R}^m$ $1\leq i \leq m$ -- непрерывно дифференцируемые функции на $\mathcal{D}$. Рассмотрим задачу
+$$
+\begin{array}{ll}
+\mbox{минимизировать } & f(x)\\
+\mbox{при условии } & g_i(x)\leq 0_m.
+\end{array}
+$$
+\pause
+Введем две вспомогательные функции
+$$
+F(t, x)=\max\{f(x)-t; g_i(x), 1\leq i\leq m\}
+$$
+$$f^*(t)=\min_{x}F(t,x)$$
+\pause
+\begin{lemma_ru}
+Если $t^*=\min_{g(x)\leq 0_m}f(x)$, то
+$$
+\begin{cases}
+f^*(t)\leq 0, & t\geq t^*,\\
+f^*(t)\geq 0, & t\leq t^*.
+\end{cases}
+$$
+\end{lemma_ru}
+\end{frame}
+
+\begin{frame}{Условия ККТ и субградиент}
+\textbf{Док-во.} Пусть $f(x^*)=t^*$, тогда при $t\geq t^*$
+$$
+f^*(t)\leq F(t, x^*)=\max\{t^*-t, g_i(x^*)\}\leq 0.
+$$
+С другой стороны, если для некоторого $t\leq t^*$ выполняется $f^*(t)< 0$, то для $y=\argmin_x F(t, x)$ имеем
+$$
+f^*(t)=\max\{f(y)-t, g_i(y)\}< 0,
+$$
+т.е. $g(y)< 0_m$ и $f(y)-t^*\leq f(y)-t< 0$, а значит $x^*$ -- не точка минимума исходной задачи. $~~\blacksquare$\\
+\pause
+\textbf{Следствие.} $x^*=\argmin_{g(x)\leq 0_m}f(x)\Leftrightarrow x^*=\argmin_x F(t^*, x)$.\\
+\pause
+\vspace{1em}
+Если $x^*=\argmin_{g(x)\leq 0_m}f(x)$, то $F(t^*, x^*)=0$. Из леммы следует, что $0=F(t^*, x^*)=f^*(t^*)$, т.е. $x^*$ минимизирует $F(t^*, \cdot)$.\\
+\pause
+\vspace{1em}
+С другой стороны, если $F(t^*, x^*)$ достигает минимума на $x^*$, то $F(t^*, x^*)=0$. Следовательно, $g(x^*)\leq 0_m$, $f(x^*)= t^*$.~$\blacksquare$
+\end{frame}
+
+
+\begin{frame}{Условия ККТ и субградиент}
+Наконец, из свойств субградиента, если $x^*$ минимизирует $F(t^*, \cdot)$, то 
+$$
+0_n\in\partial_x F(t^*, x^*)=\conv\bigcup_{i\in I(x^*)}\{\nabla f(x^*); \nabla g_i(x^*)\}
+$$
+В соответствующую выпуклую оболочку всегда выходит $\nabla f(x^*)$, а так же активные ограничения $g_i(x^*)=0$. Из характеристики выпуклой оболочки получаем, что существуют такие неотрицателные коэффициенты $\lambda_0, \ldots, \lambda_m$, что
+$$
+0_n=\lambda_0\nabla f(x^*)+\sum_{i=1}^m\lambda_i\nabla g_i(x^*),
+$$ 
+При этом $\lambda_i\neq 0\Rightarrow g_i(x^*)=0$. Добавляя условия регулярности (векторы $\nabla g_i(x^*)$ линейно независимы) получаем, что $\lambda_0>0$.
+\end{frame}
+
+\begin{frame}{Условия ККТ и субградиент}
+Итого имеем: $x^*=\argmin_{g(x)\leq 0_m}f(x)$, тогда существуют $\lambda_1, \ldots, \lambda_m$ такие, что
+\begin{align*}
+& 1. & \nabla f(x^*)+\sum_{i=1}^m \lambda_i \nabla g_i(x^*)=0_n\\
+& 2. & g(x^*)\leq 0_n \\
+& 3. & \lambda_i\geq 0 \\
+& 4. & \lambda_ig_i(x^*)=0
+\end{align*}
+\end{frame}
+
+\begin{frame}{Субградиентный спуск}
+Итак, пусть $f:\mathcal{D}\rightarrow \mathbb{R}$ -- выпуклая функция. Заменяя в градиентном методе градиент на субградиент получаем
+\begin{equation}\label{subgradient_descent}
+x_{k+1}=x_k-\alpha_kg_k,~~g_k\in\partial f(x_k)
+\end{equation}
+\pause
+\vspace{1em}
+Основное преимущество: применим для любой выпуклой функции\\
+\pause
+\vspace{1em}
+Основной недостаток: экспоненциальную сходимость можно получить в довольно экзотических случаях. В подавляющем большинстве сходимость медленная.\\
+\pause
+\vspace{1em}
+Основная проблема: в отличии от градиентного спуска нельзя гарантировать, что $g_k\rightarrow 0_n$ даже если $x_k\rightarrow x^*$.
+\end{frame}
+
+\begin{frame}{Основные предположения}
+В дальнейшем будет предполагаться следующее
+\begin{itemize}
+\item $f$ -- выпуклая на $\mathcal{D}$ функция.
+\item $f$ непрерывна по Липшицу с константой $L$, иначего говоря все субградиенты $f$ равномерно ограничены на $\mathcal{D}$ константой $L$.
+\item Расстояние от начального приближения до ближайшей точки минимума ограничено $R$. Иначе говоря,
+$$
+||x_0-x^*||\leq R
+$$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Способы выбора шага}
+
+\begin{itemize}
+\item Постоянный
+$$
+\alpha_k=\alpha
+$$
+\item Расходящийся ряд
+$$
+\alpha_k\rightarrow 0,~\sum_{i=0}^\infty\alpha_k=\infty
+$$
+\item Расходящийся ряд со сходящимся рядом квадратов
+$$
+\sum_{i=0}^\infty\alpha_k=\infty,~~\sum_{i=0}^\infty\alpha_k^2<\infty
+$$
+\item Нормированный
+$$
+\alpha_k=\frac{\gamma_k}{||g_k||}
+$$
+$\gamma_k$ -- одна из вышеуказанных последовательностей.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Основное неравенство субградиентного спуска}
+Пусть $\phi_k=\min_{1\leq i\leq k}f(x_k)$, тогда
+\begin{align*} 
+||x_{k+1}-x^*||^2&=||x_k-x^*||^2-2\alpha_kg^T_k(x_k-x^*)+\alpha_k^2||g_k||^2\\
+&\leq||x_k-x^*||^2-2\alpha_k(f(x_k)-f(x^*))+\alpha_k^2L^2\\
+&\leq ||x_0-x^*||^2-2\sum_{i=0}^k\alpha_i(f(x_i)-f(x^*))+L^2\sum_{i=0}^k\alpha_i^2\\
+&=||x_0-x^*||^2-2(\phi_k-f(x^*))\sum_{i=0}^k\alpha_i+L^2\sum_{i=0}^k\alpha_i^2
+\end{align*}
+Таким образом
+\begin{equation}\label{lower_linear_model}
+\phi_k-f(x^*)\leq \frac{R+L^2\sum_{i=1}^k\alpha_i^2}{2\sum_{i=1}^k\alpha_i}
+\end{equation}
+\end{frame}
+
+\begin{frame}{Сходимость субградиентного спуска}
+\begin{theorem_ru}[О сходимости субградиентного спуска]
+Если $f$ -- выпуклая на $\mathcal{D}$ функция, $x^*$ -- точка минимума $f$ на $\mathcal{D}$, $f$ непрерывна по Липшицу с константой $L$, $||x_0-x^*||\leq R$, то для наилучшего приближения, генерируемого по правилу \eqref{subgradient_descent} выполняется
+\begin{itemize}
+\item При $\alpha_k=\alpha$
+$$
+\uplim_{k\rightarrow +\infty}\phi_k-f(x^*)\leq \frac{\alpha L^2}{2}
+$$
+\item При $\alpha_k\rightarrow 0,~\sum_{k=1}^\infty \alpha_k=\infty$
+$$
+\phi_k-f(x^*)\rightarrow 0.
+$$
+\end{itemize}
+\end{theorem_ru}
+
+\end{frame}
+
+\begin{frame}{Сходимость субградиентного спуска}
+\textbf{Док-во.} Первое утверждение выводится непосредственно подстановкой $\alpha_k=\alpha$ и предельным переходом в \eqref{subgradient_descent}\\
+\pause
+\vspace{1em}
+Для второго утверждения в силу $\alpha_i\rightarrow 0$ существует $N_1:~\forall k>N_1~\alpha_i<\frac{\epsilon}{L^2}$, а в силу $\sum_{i=0}^\infty \alpha_i=\infty$ существует $N_2:~\forall n>N_2~\sum_{i=0}^n\alpha_i>\frac{R}{\epsilon}$ таким образом для $k\geq \max\{N_1, N_2\}$ получаем
+\begin{align*}
+\phi_k-f(x^*)&\leq \frac{R+L^2\sum_{i=1}^k\alpha_i^2}{2\sum_{i=0}^k\alpha_i}\leq \frac{R}{2\sum_{i=0}^k\alpha_i}+\frac{L^2\epsilon \sum_{i=0}^k\alpha_i}{2\sum_{i=0}^k\alpha_i}\\
+&< \frac{R}{2\frac{R}{\epsilon}}+\frac{\epsilon\sum_{i=0}^k\alpha_i}{2\sum_{i=0}^k\alpha_i}=\epsilon 
+\end{align*}
+
+\end{frame}
+
+\begin{frame}{Оптимальный выбор шага относительно \eqref{lower_linear_model}}
+Оценка \eqref{lower_linear_model} представляет собой функцию переменных $\alpha_1, \ldots, \alpha_k$, минимизация
+которой будет давать гарантию лучшей сходимости.\\
+\pause
+\vspace{1em}
+Обозначим
+$$
+\Phi(\alpha_1, \ldots, \alpha_k)=\frac{R+L^2\sum_{i=1}^k\alpha_i^2}{2\sum_{i=1}^k\alpha_i}.
+$$
+\pause
+Дифференцируя по $\alpha_i$ получаем
+$$
+\frac{\partial \Phi}{\partial \alpha_i}=\frac{4L^2\alpha_i\sum_{i=1}^k\alpha_i-2(R+L^2\sum_{i=1}^k\alpha_i^2)}{(2\sum_{i=1}^k\alpha_i)^2}=0.
+$$
+\pause
+Уравнение идентично для различных $i$, что дает равенство всех $\alpha_i$. Используя это получаем упрощенное уравнение на $\alpha_i$:
+$$
+4L^2k\alpha_i^2=2R+2L^2k\alpha_i^2,
+$$
+что дает
+$$
+\alpha_i=\frac{\sqrt{R}}{L\sqrt{k}}
+$$
+
+\end{frame}
+
+\begin{frame}{Ссылки на литературу}
+\href{http://premolab.ru/pub_files/pub5/MnexoB89z7.pdf}{\textit{Нестеров Ю. Е.} Методы выпуклой оптимизации}
+ // параграфы 3.1.5--3.2.3\\
+ \vspace{1em}
+
+\href{http://www.seas.ucla.edu/~vandenbe/236C/lectures/subgradients.pdf}{\textit{Vandenberghe L.} Subgradients (slides)}\\
+\vspace{1em}
+
+\href{https://web.stanford.edu/class/ee392o/subgrad_method.pdf}{\textit{Boyd S. et al.} Subgradient Descent (course notes)}
+
+
+\end{frame}
+
+
+
+
+\end{document}

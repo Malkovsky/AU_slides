@@ -1,0 +1,377 @@
+%\documentclass[10pt, handout]{beamer}
+\documentclass[10pt, handout]{beamer}
+\usetheme{Madrid}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage[OT1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{scrextend}
+\author{Мальковский Н.~В.}
+\title[Рекуррентные схемы]{Неподвижные точки и рекуррентные схемы}
+%\setbeamercovered{transparent} 
+\setbeamertemplate{navigation symbols}{} 
+%\logo{} 
+\institute[СПбАУ]{Санкт-Петербургский Академический Университет}
+\date{} 
+%\subject{} 
+\usecolortheme{beaver}
+
+\DeclareMathOperator{\argmin}{argmin}
+\DeclareMathOperator{\interior}{Int}
+\DeclareMathOperator{\lin}{Span}
+\DeclareMathOperator{\llin}{Lin}
+\DeclareMathOperator{\diag}{diag}
+
+%\setbeamertemplate{theorems}[numbered]
+
+\newcounter{thm}
+\newcounter{lm}
+\newcounter{def}
+
+
+\newtheorem{theorem_ru}[thm]{Теорема}
+\newtheorem{lemma_ru}[lm]{Лемма}
+\newtheorem{corollary_ru}{Следствие}[]
+\newtheorem{definition_ru}{Определение}[def]
+
+\graphicspath{{image/}}
+\newcommand{\Ima}{\text{Im}}
+\newcounter{remarknumber}[framenumber]
+\newcommand{\remark}{\stepcounter{remarknumber}\textit{Замечание}~\arabic{remarknumber}}
+
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\centering
+\includegraphics[width=.23\textwidth]{logo.png}
+\end{frame}
+
+\begin{frame}{Понятие неподвижной точки}
+\begin{definition_ru}
+Пусть $X$ -- произвольное пространство, $f:X\rightarrow X$. \underline{Неподвижное точкой} отображения $f$ на $X$ называется $x^*\in X$, для которого выполняется 
+$$
+f(x^*)=x^*.
+$$ 
+\end{definition_ru}
+\end{frame}
+
+\begin{frame}{Примеры}
+\pause
+\begin{itemize}[<+->]
+\item[1.] $f:\mathbb{R}\rightarrow \mathbb{R}$, $f(x)=x^2$, две неподвижные точки: $\{0, 1\}$.
+\item[2.] $g:\mathbb{R}^n\rightarrow \mathbb{R}$, $g$ дифференцируема $f(x)=x-\alpha \nabla g(x)$. Любая точка минимума $g$ является неподвижной точкой $f$.
+\item[3.] $\frac{d}{dx}:C^{(1)}[a,b]\rightarrow C[a,b]$ -- оператор дифференцирования. Неподвижные точки -- функции вида $Ce^x$.
+\item[4.] $f:\Delta_n\rightarrow \Delta_n$, где $\Delta_n=\{x\in\mathbb{R}^n~|~x\geq 0_n,~\mathbf{1}^Tx=1\}$ -- стандартный $n$-мерный симплекс, $f(x)=Px$, где $P^T$ -- стохастическая матрица. Процесс
+$$
+x_{k+1}=f(x_k)
+$$
+принято называть \textit{марковским процессом}. Компонента $i$ вектора $x_k$ представляют собой вероятность оказаться в состоянии $i$ на итерации $k$. Матрица $P$ задает вероятность перехода. Предельное состояние процесса является неподвижной точкой $f$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Непрерывность по Липшицу}
+\begin{definition_ru}
+Пусть $(X, \delta_X)$, $(Y, \delta_Y)$ -- метрические пространства. Отображение $f:X\rightarrow Y$ называется \underline{непрерывным по Липшицу} с констаной $L>0$, если  $\forall x,y\in X$ выполняется
+$$
+\delta_Y(f(x), f(y))\leq L\delta_X (x, y).
+$$
+\end{definition_ru}
+\pause
+\textit{Замечание.} Непрерывность по Липшицу можно ввести и для нормированного пространства как
+$$
+||f(x)-f(y)||_X\leq L||x-y||_Y
+$$
+\end{frame}
+
+\begin{frame}{Непрерывность по Липшицу}
+\begin{theorem_ru}[О функции с непрерывным по липшицу градиентом]
+Пусть $f:\mathbb{R}^n\rightarrow \mathbb{R}^m$, $\nabla f$ непрерывен по Липшицу с константой $L$, тогда $\forall x, y$
+\begin{align*}
+&f(y)\leq f(x)+\nabla f(x)^T(y-x)+\frac{L}{2}||y-x||^2,\\
+&(\nabla f(y) - \nabla f(x))^T(y-x)\leq L||y-x||^2.
+\end{align*}
+\end{theorem_ru}
+\pause
+\textbf{Док-во.} Заметим, что
+$$
+(\nabla f(y)-\nabla f(x))^T(y-x)\leq ||\nabla f(y)-\nabla f(x)|| \cdot ||y-x||\leq L||y-x||^2.
+$$
+\pause
+Остальное получается по аналогии с сильной выпуклостью.
+\end{frame}
+
+\begin{frame}{Сжимающее отображение}
+\begin{definition_ru}
+Пусть $(X, \delta)$ -- метрическое пространство. Отображение $f:X\rightarrow X$ называется \underline{сжимающим}, если оно непрерывно по Липшицу с константой $L<1$.
+\end{definition_ru}
+\pause
+Примеры
+\begin{itemize}[<+->]
+\item[1.] $f:\mathbb{R}^n\rightarrow \mathbb{R}^n$, $f(x)=\alpha x+b$, $|\alpha|<1$.
+\item[2.] $f:\mathbb{R}^n\rightarrow \mathbb{R}^n$, $f(x)=Ax+b$, $A$ -- симметричная вещественная матрица и $\sigma(A)<1$ ($\sigma(A)=\max\{|\lambda|~|~\exists v\neq 0_n,~Av=\lambda v\}$). 
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Теорема Банаха}
+\begin{theorem_ru}[Банаха о сжимающем отображении]
+Пусть $(X, \delta)$ -- непустое полное метрическое пространство (банахово пространство), $f$ -- сжимающее отображение на $X$ с константой $q$, тогда 
+\begin{itemize}
+\item Существует единственная неподвижная точка $x^*\in X$ функции на $f$ на $X$.
+\item При любом $x_0\in X$ рекуррентная последовательность $x_{k+1}=f(x_k)$ сходится к $x^*$.
+\end{itemize} 
+\end{theorem_ru}
+\pause
+\textbf{Док-во.} Для последовательности $x_{k+1}=f(x_k)$ имеет место
+$$
+\delta(x_{k+1}, x_k)=\delta(f(x_k), f(x_{k-1}))\leq q\delta(x_k, x_{k-1})\leq\ldots\leq q^k\delta(x_1, x_0).
+$$
+\pause
+Таким образом, для любых $n<m$
+$$
+\delta (x_n, x_m)\leq \sum_{i=n}^{m-1} \delta(x_{i+1}, x_i)\leq q^n\sum_{i=0}^{m-n-1}q^i\delta (x_1, x_0)\leq \frac{q^n}{1-q}\delta(x_1, x_0),
+$$
+а значит $x_k$ -- фундаментальная последовательность (последовательность Коши). Так как $X$ полно, то $x_k$ имеет предел в $X$, обозначим его за $x^*$.
+\end{frame}
+
+\begin{frame}{Теорема Банаха}
+Так как $x_k\xrightarrow{\delta}x^*$, то
+$$
+\delta(f(x_k), f(x^*))\leq q\delta(x_k, x^*)\rightarrow 0,
+$$
+т.е. $f(x_k)\xrightarrow{\delta}f(x^*)$. \pause Переходя к пределу в рекуррентном соотношении получаем
+$$
+x^*=\lim_{k\rightarrow\infty}x_{k+1}=\lim_{k\rightarrow\infty}f(x_k)=f(x^*).
+$$
+\pause
+Осталось показать единственность $x^*$: пусть $f(y)=y$, тогда
+$$
+\delta(x^*, y)=\delta (f(x^*), f(y))\leq q\delta(x^*, y)~\Rightarrow~\delta(x^*, y)=0~\Rightarrow~x^*=y.~~\blacksquare
+$$
+\pause
+\textit{Замечание}. Можно оценить скорость сходимости:
+$$
+\delta(x_k, x^*)\leq \sum_{i=k}^\infty \delta(x_i, x_{i+1})\leq q^k\sum_{i=0}^\infty q^i\delta(x_1, x_0)=\frac{q^k}{1-q}\delta(x_1, x_0)
+$$
+\end{frame}
+
+\begin{frame}{Замечания}
+\textit{Замечание} 1. Легко проверить, что для функции $f:\mathbb{R}\rightarrow\mathbb{R}$, $f(x)=\frac{x+\sqrt{x^2+1}}{2}$ выполняется
+$$
+|f(x)-f(y)|<|x-y|,
+$$
+но при этом у $f$ нет неподвижных точек
+$$
+f(x)-x=\frac{\sqrt{x^2+1}-x}{2}> \frac{|x|-x}{2}\geq 0.
+$$
+\pause
+\textit{Замечание} 2. Для аффинных отображений $f:\mathbb{R}^n\rightarrow\mathbb{R}^n$, $f(x)=Ax+b$ выполняется
+$$
+||f(x)-f(y)||=||Ax-Ay||\leq ||A||\cdot||x-y||.
+$$
+Для симметричных матриц $||A||=\sigma(A)$, что неверно для несимметричных матриц, однако условие $\sigma(A)<1$ всегда гарантирует сходимость последовательности
+$$
+x_{k+1}=f(x_k)
+$$
+\end{frame}
+
+\begin{frame}{Сходимость линейных рекуррентных процессов}
+Посмотрим подробнее на последовательность вида
+\begin{equation}\label{linear_process}
+x_{k+1}=Ax_k+b,
+\end{equation}
+где $x_k, b\in \mathbb{R}^n$, $\mathbb{R}^{n\times n}$. \\
+\vspace{1em}
+\pause
+Заметим для начала что для жорданова блока $J_i$ 
+$$
+J_i=\left(
+\begin{array}{ccccc}
+\lambda_i & 1 & \ldots & 0 & 0\\
+0 & \lambda_i & \ldots & 0 & 0\\
+\vdots & \vdots & \ddots_i & \vdots & \vdots \\
+0 & 0 & \ldots & \lambda_i & 1\\
+0 & 0 & \ldots & 0 & \lambda_i
+\end{array}
+\right)
+$$
+выполняется
+$$
+J_i^k=\left(
+\begin{array}{ccccc}
+\lambda^k_i & C_k^1\lambda^{k-1}_i & \ldots & C^{n-2}_k\lambda^{k-n+2}_i & C^{n-1}_k\lambda^{k-n+1}_i\\
+0 & \lambda^k_i & \ldots & C^{n-3}_k\lambda^{k-n+3}_i & C^{n-2}_k\lambda^{k-n+2}_i\\
+\vdots & \vdots & \ddots & \vdots & \vdots \\
+0 & 0 & \ldots & \lambda^k_i & C_k^1\lambda^{k-1}_i\\
+0 & 0 & \ldots & 0 & \lambda^k_i
+\end{array}
+\right)
+$$
+\end{frame}
+
+\begin{frame}{Сходимость линейных рекуррентных процессов}
+Далее, при фиксированном $n$, $C_k^n$ -- полином степени $n$ от $k$, рост которой сколь угодно мал по сравнению с $\lambda^k_i$. Опуская некоторые технические детали, $\forall 0<\epsilon<1-|\lambda_i|$ $\exists C>0:~\forall k$ выполняется
+$$
+C_k^n\lambda_i^k\leq C(|\lambda_i|+\epsilon)^k
+$$
+и аналогично для $J^k$: $\forall 0<\epsilon<1-|\lambda_i|$ $\exists C:~\forall k$ выполняется
+$$
+||J_i^k||\leq C(|\lambda_i|+\epsilon)^k 
+$$
+\pause
+Далее, если $A=P^{-1}JP$ -- жорданова форма $A$, то
+$$
+J^k=\left(
+\begin{array}{cccc}
+J_1 & 0 & \ldots & 0\\
+0 & J_2 & \ldots & 0\\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \ldots & J_l
+\end{array}
+\right)^k
+=
+\left(
+\begin{array}{cccc}
+J_1^k & 0 & \ldots & 0\\
+0 & J_2^k & \ldots & 0\\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \ldots & J_l^k
+\end{array}
+\right)
+$$
+\pause
+И наконец $A^k=P^{-1}JPP^{-1}JP\ldots P^{-1}JP=P^{-1}J^kP$, что наконец дает $\forall 0<\epsilon<1-|\lambda_i|$ $\exists C:~\forall k$ $||A^k||\leq C(\sigma(A)+\epsilon)^k$.~~~$\blacksquare$
+\end{frame}
+
+\begin{frame}{Сходимость линейных рекуррентных процессов}
+Теперь вернемся к последовательности \eqref{linear_process}. По аналогии с теоремой Банаха докажем существование предела в случае $\sigma(A)<1$:
+\begin{align*}
+||x_{k+1}-x_k||&=||Ax_k+b-Ax_{k-1}-b||=||A(x_k-x_{k-1})||=\ldots\\
+&=||A^k(x_1-x_0)||\leq ||A^k||~||x_1-x_0||.
+\end{align*}
+\pause
+При $n<m$
+$$
+||x_m-x_n||\leq \sum_{i=n}^{m-1}||x_{i+1}-x_i||\leq ||A^n||~||x_1-x_0||~\sum_{i=0}^{m-n-1}||A^k||
+$$
+\pause
+Из полученных результатов $\exists C_1>0:~\sum_{i=0}^{\infty}||A^k||<C_1$. Пусть $\epsilon=\frac{1}{2}(1-\sigma(A))$, тогда для некоторого $C_2$ $\forall n$ 
+$$
+||x_m-x_n||\leq C_1C_2\left(\frac{\sigma(A)+1}{2}\right)^n  ||x_1-x_0||\xrightarrow{n\rightarrow \infty} 0,
+$$
+то есть $x_k$ -- фундаментальная последовательность, а значит имеет предел, обозначим его $x^*$.
+\end{frame}
+
+\begin{frame}{Сходимость линейных рекуррентных процессов}
+Очевидным образом
+$$
+x^*=Ax^*+b.
+$$
+\pause
+Наконец
+$$
+||x_k-x^*||=||Ax_{k-1}+b-Ax^*-b||=\ldots=||A^k(x_0-x^*)||\leq C(\sigma(A)+\epsilon)^k||x_0-x^*||.\blacksquare
+$$
+
+\end{frame}
+
+\begin{frame}{Сходимость нелинейных рекуррентных процессов}
+Пусть теперь $f$ -- произвольная функция, $x^*$ -- неподвижная точка $f$, рассмотрим процесс
+\begin{equation}\label{non_linear_process}
+x_{k+1}=f(x_k)
+\end{equation}
+\pause
+Если $f$ дифференцируема в точке $x^*$, то поведение \eqref{non_linear_process} схоже её линейному приближению $x_{k+1}=f(x^*)+\nabla f(x^*)^T(x_k-x^*)$.
+\pause
+\begin{theorem_ru}
+Если $f$ дифференцируема в точке $x^*$, тогда для любого $0<\epsilon<1-\sigma(\nabla f(x^*))$ найдутся такие $\delta>0$ и $C$, что при $||x_0-x^*||<\delta$ в процессе \eqref{non_linear_process} выполняется
+$$
+||x_k-x^*||\leq C(\sigma(\nabla f(x^*))+\epsilon)^k
+$$
+\end{theorem_ru}
+\pause
+\textbf{Док-во}. Обозначим $A=\nabla f(x^*)$, $\sigma=\sigma(A)$. Из дифференцируемости $f$ в $x^*$ существует $\alpha:\mathbb{R}^n\rightarrow\mathbb{R}^n$, $\frac{\alpha(x)}{||x-x^*||}\xrightarrow{x\rightarrow x^*} 0$
+$$
+f(x)=f(x^*)+A(x-x^*)+\alpha(x_k)
+$$
+\end{frame}
+
+\begin{frame}{Сходимость нелинейных рекуррентных процессов}
+\begin{align*}
+||x_{k}-x^*||&=||A(x_{k-1}-x^*)+\alpha(x_{k-1})||=\ldots\\
+&\leq ||A^k||~||x_0-x^*||+\sum_{i=1}^k||A^{i-1}||~||\alpha(x_{k-i})||
+\end{align*}
+\pause
+Из доказанного ранее $\exists C: ||A^k||\leq C(\sigma+\epsilon)^k$. Зафиксируем некоторое $K>0$, выберем $\delta$ так, чтобы для всех $x_k$ $0\leq k\leq K$ выполнялось $|\alpha(x_k)|\leq \frac{\sigma+\epsilon}{C(C+1)K}||x_k-x^*||$. Докажем по индукции, что в этом случае при $0\leq k\leq K$ выполняется $||x_k-x^*||\leq (C+1)(\sigma+\epsilon)^k||x_0-x^*||$:
+\pause
+\begin{align*}
+||x_{k}-x^*||&\leq ||A^k||~||x_0-x^*||+\sum_{i=1}^k||A^{i-1}||~||\alpha(x_{k-i})||\\
+&\leq C(\sigma+\epsilon)^k||x_0-x^*||+\frac{1}{(C+1)K}\sum_{i=1}^k(\sigma+\epsilon)^{i}~||x_{k-i}-x^*||\\
+&\leq \left(C(\sigma+\epsilon)^k+\frac{1}{K}\sum_{i=1}^k(\sigma+\epsilon)^k\right)||x_0-x^*|| \leq (C+1)(\sigma+\epsilon)^k||x_0-x^*||
+\end{align*}
+
+\end{frame}
+
+\begin{frame}{Сходимость нелинейных рекуррентных процессов}
+Выберем $K$ (и вместе с ним $\delta$) так, чтобы выполнялось $\gamma=(C+1)(\sigma+\epsilon)^K<1$, что дает нам
+$$
+||x_K-x^*||\leq\gamma||x_0-x^*||<||x_0-x^*||.
+$$
+\pause
+Учитывая это можно повторить всю процедуру не изменяя выбранных констант начиная не из $x_0$, а из $x_K$, что дает для $0\leq k\leq K$
+$$
+||x_{K+k}-x^*||\leq (C+1)(\sigma+\epsilon)^k||x_K-x^*||\leq (C+1)^2\gamma(\sigma+\epsilon)^{K+k}||x_0-x^*||
+$$
+\pause
+Повторяя нужное число раз, при $k=iK+j$
+\begin{align*}
+||x_k-x^*||&\leq (C+1)^{i+1}(\sigma+\epsilon)^k||x_0-x^*||\\
+&\leq(C+1)\left((C+1)\left(\frac{\sigma+\epsilon}{\sigma+2\epsilon}\right)^K\right)^i(\sigma+2\epsilon)^k
+\end{align*}
+\pause
+Наконец выберем $K$ и вместе с ним $\delta$ так, чтобы $(C+1)\left(\frac{\sigma+\epsilon}{\sigma+2\epsilon}\right)^K<1$. $\blacksquare$
+\end{frame}
+
+\begin{frame}{Замечания}
+\textit{Замечание} 1. Схожие соображения используются для анализа локальной устойчивости динамических систем: если $x^*=f(x^*)$, то решение $x(t)=x^*$ системы дифференциальных 
+$$
+\dot{x}=f(x)-x
+$$
+асимптотически устойчива если вещественные части всех собственных чисел матрицы $\nabla f(x^*)-I$ строго отрицательны. Систему \eqref{non_linear_process} можно рассматривать как дискретизацию этой:
+$$
+x_{k+1}=f(x_k)~~\Rightarrow~~x_{k+1}-x_k=f(x_k)-x_k
+$$
+\end{frame}
+
+\begin{frame}{Квадратичная сходимость рекуррентных процессов}
+\begin{theorem_ru}
+Пусть $f:\mathbb{R}^n\rightarrow\mathbb{R}^n$, $x^*=f(x^*)$, $f$ дифференцируема на $S=\{||x-x^*||\leq ||x_0-x^*||\}$, $\nabla f$ удовлетворяет условию Липшица с константой $L$, $\nabla f(x^*)=0$ и $q=\frac{L}{2}||x_0-x^*||<1$, то
+последовательность \eqref{non_linear_process} удовлетворяет
+$$
+||x_k-x^*||\leq \frac{2}{L}q^{2^k}
+$$
+\end{theorem_ru}
+\pause
+\textbf{Док-во.}
+$$
+||x_1-x^*||= ||f(x_0)-f(x^*)||=||f(x_0)-f(x^*)-\nabla f(x^*)^T(x_0-x^*)||\leq \frac{L}{2}||x_0-x^*||^2
+$$
+\pause
+В частности $||x_1-x^*||\leq q||x_0-x^*||$, т.е. $x_1\in S$, что позволяет повторить оценку для $x_2, \ldots$
+\begin{align*}
+||x_{k}-x^*||&\leq \frac{L}{2}||x_{k-1}-x^*||^2\\
+&\leq \left(\frac{L}{2}\right)^{2^k-1}||x_0-x^*||^{2^k}=\frac{2}{L}q^{2^k}||x_0-x^*||^{2^k}~~\blacksquare
+\end{align*}
+\end{frame}
+
+\begin{frame}{Ссылки на литературу}
+\href{http://lab7.ipu.ru/files/polyak/polyak-optimizationintro.pdf}{\textit{Поляк Б. Т.} Введение 
+в оптимизацию} // глава 2
+\end{frame}
+
+
+\end{document}

@@ -1,0 +1,275 @@
+\documentclass[10pt]{beamer}
+%\documentclass[10pt, handout]{beamer}
+\usetheme{Madrid}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage[OT1]{fontenc}
+\usepackage{amsmath}
+\usepackage[normalem]{ulem}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{multimedia}
+\usepackage{scrextend}
+\author{Мальковский Н.~В.}
+\title[Вводная лекция]{Вводная лекция}
+%\setbeamercovered{transparent} 
+\setbeamertemplate{navigation symbols}{} 
+\graphicspath{{image/}}
+%\logo{} 
+\institute[СПбАУ]{Санкт-Петербургский Академический  Университет}
+\date{} 
+\usecolortheme{beaver}
+%\subject{} 
+
+
+%\usepackage{ocgx2}
+%\usepackage{media9}%
+%\newcommand{\includemovie}[3]{%
+%\includemedia[%
+%width=#1,height=#2,%
+%activate=pagevisible,%
+%deactivate=pageclose,%
+%addresource=#3,%
+%flashvars={%
+%src=#3 % same path as in addresource!
+%&autoPlay=true % default: false; if =true, %automatically starts playback after activation (see %option ‘activation)’
+%&loop=true % if loop=true, media is played in a loop
+%&controlBarAutoHideTimeout=0 %  time span before auto-%hide
+%}%
+%]{}{StrobeMediaPlayback.swf}%
+
+\DeclareMathOperator{\argmin}{argmin}
+\DeclareMathOperator{\interior}{Int}
+\DeclareMathOperator{\lin}{Span}
+\DeclareMathOperator{\llin}{Lin}
+\DeclareMathOperator{\diag}{diag}
+
+
+
+%\setbeamertemplate{theorems}[numbered]
+
+\newcounter{thm}
+\newcounter{lm}
+\newcounter{def}
+
+
+\newtheorem{theorem_ru}[thm]{Теорема}
+\newtheorem{lemma_ru}[lm]{Лемма}
+\newtheorem{corollary_ru}{Следствие}[]
+\newtheorem{definition_ru}{Определение}[def]
+
+\newcommand{\Ima}{\text{Im}}
+\newcounter{remarknumber}[framenumber]
+\newcommand{\remark}{\stepcounter{remarknumber}\textit{Замечание}~\arabic{remarknumber}}
+
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\centering
+\includegraphics[width=.23\textwidth]{logo.png}
+\end{frame}
+
+\begin{frame}{Что такое математическая оптимизация?}
+\pause
+Общая задача минимизации: найти для функции $f:\mathcal{D}\rightarrow\mathbb{R}$ такую точку $x^*$, что
+$$
+f(x)\geq f(x^*)~~\forall x\in \mathcal{D}
+$$
+\pause
+или по заданному $\epsilon$ такую точку $x_\epsilon$, что
+$$
+f(x_\epsilon)\leq f(x^*)+\epsilon
+$$
+или
+$$
+||x_\epsilon-x^*||\leq \epsilon.
+$$
+
+\end{frame}
+
+\begin{frame}{Что изучает математическая оптимизация?}
+\pause
+\begin{itemize}[<+->]
+\item Общие закономерности задач математической оптимизации
+\item Аналитические методы решения задач оптимизации
+\item Численные методы решения задач оптимизации и их свойства (алгоритмическая сложность)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{О чем курс?}
+Основное направление курса -- выпуклая оптимизация, основные темы:
+\pause
+\begin{itemize}[<+->]
+\item Методы безусловной оптимизации (градиентный/субградиентный спуск, случайный поиск, метод Ньютона) и их анализ
+\item Теория двойственности
+\item Методы условной оптимизации (симплекс-метод, проективный градиентный спуск, метод эллипсоидов, метод внутренней точки) и их анализ
+\item Некоторые стандартные обобщения: стохастические и покоординатные варианты методов 
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Основные параметры задачи}
+\pause
+\begin{itemize}[<+->]
+\item Свойства множества $\mathcal{D}$ (дискретность, связность, выпуклость)
+\item Свойства функции $f$ (непрерывность, дифференцируемость, выпуклость)
+\item Доступные к измерению величины
+\begin{itemize}[<+->]
+\item Значения $f$ и её производных
+\item Вспомогательные функции: проекция на $\mathcal{D}$, опорная гиперплоскость к $\mathcal{D}$ и~т.~п.
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Виды алгоритмов оптимизации}
+\pause
+\begin{itemize}[<+->]
+\item Точные: алгоритм за конечное число арифметических действий получает значение $x^*$
+\item Приближенные: для некоторого $\gamma\geq 0$ и любого $\epsilon>\gamma$ алгоритм за конечное число операций получает $x_\epsilon$ такое, что
+$$
+||x_\epsilon-x^*||\leq \epsilon~~\mbox{или}~~f(x_\epsilon)-f(x^*)\leq \epsilon
+$$
+\item Асимптотические: алгоритм строит последовательность $x_k\in \mathcal{D}$ такую, что
+$$
+x_k\rightarrow x^*~~\mbox{или}~~f(x_k)\rightarrow f(x^*)
+$$
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Комбинаторная оптимизация}
+\pause
+\begin{itemize}[<+->]
+\item Простая функция $f$
+\item Дискретное множество $\mathcal{D}$
+\item Большинство задач не разрешимы полиномиально
+\item \sout{Используются в основном точные алгоритмы}
+\item Основные темы: оптимизация на графах, матроиды, субмодулярные функции и~т.~д.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Выпуклая оптимизация}
+\pause
+\begin{itemize}[<+->]
+\item Выпуклая функция $f$
+\item Выпуклое множество $\mathcal{D}$ (важно: выпуклость исключает дискретность)
+\item Используются в основном асимптотические методы, иногда точные (симплекс-метод)
+\item Все методы имеют сходимость по $\epsilon$ не хуже $\mathcal{O}(1/\sqrt{\epsilon})$, количество вычислений на одну итерацию полиномиально относительно размера пространства
+\item Основные темы: линейное программирование, двойственность, градиентный спуск и прочее
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Замечания}
+Следующие методы также распространены для различных задач оптимизации:
+\pause
+\begin{itemize}[<+->]
+\item Метод отжига/генетические методы: в основном используются для задач, где неприменимы другие методы. Не имеют гарантий результата.
+\item Метод ветвей и границ: также используется, когда больше нечего применить, однако имеет гарантию сходимости, хоть и может при этом очень долго искать ответ.
+\item Динамическое программирование: изначально задумано для оптимизации процессов, однако в последствии нашло применение в гораздо большем классе задач.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Простая задача оптимизации}
+Пусть $\mathcal{D}$ -- открытое множество, $f:\mathcal{D}\rightarrow\mathbb{R}$ -- дифференцируемая функция. \pause Задача
+$$
+\begin{array}{ll}
+\mbox{минимизировать } & f(x),~~x\in \mathcal{D}
+\end{array}
+$$
+исторически является одной из первых задач оптимизация общего вида. Решение этой задачи обычно получается из условий стационарности (теорема Ферма)
+$$
+\nabla f(x) = 0_\mathcal{D}.
+$$
+\end{frame}
+
+
+\begin{frame}{Задача оптимизации с ограничениями}
+Пусть $\mathcal{D}$ -- открытое множество, $f:\mathcal{D}\rightarrow\mathbb{R}$, $g:\mathcal{D}\rightarrow \mathbb{R}^m$ -- дифференцируемые функции.
+\pause Задача
+$$
+\begin{array}{ll}
+\mbox{минимизировать } & f(x),~~x\in \mathcal{D}\\
+\mbox{при условии } & g(x)= 0_m
+\end{array}
+$$
+впервые была изучена Лагранжем, позднее в 20 веке обобщена до задач с ограничением в виде неравенств. На основе этих результатов выстроена современная теория двойственности в задачах оптимизации.
+\end{frame}
+
+\begin{frame}{Две статистические задачи}
+Метод максимального правдоподобия:
+$$
+\mbox{максимизировать } P\{y~|~x\},
+$$
+где $P\{y~|~x\}$ -- вероятность $y$ при условии $x$, $x$ -- подлежащие оценки параметры системы, $x$ -- наблюдаемые параметры системы.\\
+\pause
+\vspace{1em}
+Минимизация функционала среднего риска:
+$$
+\mbox{минимизировать } ~ f(x),
+$$
+где $F(x)=E_\omega F(x, \omega)$.\\
+\pause
+\vspace{1em}
+Основная сложность таких задач заключается в том, что ни функция $f$, ни $F$ заранее не известны, есть только возможность измерить $F(x, \omega)$ со случайной реализацией $\omega$.
+\end{frame}
+
+\begin{frame}{Задачи трекинга}
+Дана последовательность функций $f_k:\mathcal{D}\rightarrow \mathbb{R}$, известно, что точки минимума $x_k^*, x_{k+1}^*$ функций $f_k$ и $f_{k+1}$ отличаются не сильно, задача трекинга заключается в построении такой последовательности $x_k$, что для фиксированного $\epsilon>0$ существует $K:~\forall k\geq K$ выполняется
+$$
+||x_k-x_k^*||\leq \epsilon.
+$$
+\pause
+Пример: отслеживание положения движущегося объекта в пространстве по видеосъемке.
+\end{frame}
+
+\begin{frame}{Седловые задачи}
+Оптимизация худшего случая:
+$$
+\mbox{минимизировать } \max_y f(x, y)
+$$
+\pause
+Теория игр: два игрока ходят одновременно, первый может выбирать из множества $X$, второй --  их множества $Y$. Пусть $f:X\times Y\rightarrow \mathbb{R}$, $f(x, y)$ -- плата первого игрока второму при условии, что он выбрал $x$, а его соперник -- $y$. Задача первого игрока:
+$$
+\mbox{минимизировать } \max_y f(x, y).
+$$
+\pause
+Задача второго игрока:
+$$
+\mbox{максимизировать } \min_x f(x, y)
+$$
+\end{frame}
+
+\begin{frame}{Вариационные задачи}
+Пусть $f, g:\mathcal{D}\times \mathcal{U}\rightarrow \mathbb{R}$. Вариационные задачи обычно заключаются в нахождении минимума функционала на некотором множестве кривых и может быть сформулирована например следующим образом
+$$
+\begin{array}{ll}
+\mbox{минизировать } & \int_a^bg(x(t), u(t))dt\\
+\mbox{при условии } & \frac{d}{dt}x(t)=f(x(t), u(t)).
+\end{array}
+$$
+\pause
+Часто к этой задаче добавляются краевые условия вида $x(a)=x_0$, $x(b)=x_1$. Основной сутью этой задачи является выбор оптимальной траектории для некоторой динамической системы.
+\end{frame}
+
+\begin{frame}
+\begin{center}
+        \movie{\includegraphics[width=.9\textwidth]{fastest.png}}{image/fastest.avi}
+\end{center}
+%\movie{}{image/fastest.avi}
+\end{frame}
+
+\begin{frame}{Рекомендованная литература}
+\begin{itemize}
+\item Нестеров. Ю. Е. \textit{Методы выпуклой оптимизации }, 2010 (перевод с англ. его же книги 1998 года \textit{Introductory lectures on convex programming})
+\item Поляк Б. Т. \textit{Введение в оптимизацию}, 1986 
+\item Boyd S., Vandenberghe L. \textit{Convex Optimization}, 2004
+\item Luenberger D., Yinyu Y. \textit{Linear and nonlinear optimization}, 2008
+\end{itemize}
+\end{frame}
+
+\end{document}

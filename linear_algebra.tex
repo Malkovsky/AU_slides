@@ -1,0 +1,672 @@
+\documentclass[10pt, handout]{beamer}
+%\documentclass[10pt]{beamer}
+\usetheme{Madrid}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage[OT1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{scrextend}
+\author{Мальковский Н.~В.}
+\usecolortheme{beaver}
+\title[Линейная алгебра]{Краткий экскурс по линейной алгебре}
+%\setbeamercovered{transparent} 
+\setbeamertemplate{navigation symbols}{} 
+%\logo{} 
+\institute[СПбАУ]{Санкт-Петербургский Академический Университет}
+\date{} 
+%\subject{} 
+
+\DeclareMathOperator{\argmin}{argmin}
+\DeclareMathOperator{\interior}{Int}
+\DeclareMathOperator{\lin}{Span}
+\DeclareMathOperator{\llin}{Lin}
+\DeclareMathOperator{\diag}{diag}
+
+%\setbeamertemplate{theorems}[numbered]
+
+\newcounter{thm}
+\newcounter{lm}
+\newcounter{def}
+
+
+\newtheorem{theorem_ru}[thm]{Теорема}
+\newtheorem{lemma_ru}[lm]{Лемма}
+\newtheorem{corollary_ru}{Следствие}[]
+\newtheorem{definition_ru}{Определение}[def]
+
+\graphicspath{{image/}}
+\newcommand{\Ima}{\text{Im}}
+\newcounter{remarknumber}[framenumber]
+\newcommand{\remark}{\stepcounter{remarknumber}\textit{Замечание}~\arabic{remarknumber}}
+
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\centering
+\includegraphics[width=.23\textwidth]{logo.png}\end{frame}
+
+\begin{frame}{Линейные пространства}
+\begin{definition_ru}
+Линейным (векторным) пространством над полем $K$ называется некоторое множество $V$ с двумя операциями: сложением ``$+$''$:V\times V\rightarrow V$ и умножением на скаляр ``$\cdot$''$:K\times V\rightarrow V$, удовлетворяющие следующим свойствам:
+\begin{labeling}{Обратный элемент}
+\item[Ассоциативность] $x+(y+z)=(x+y)+z$, $\forall x,y,z\in V$
+\item[Коммутативность] $x+y=y+x$, $\forall x,y\in V$
+\item[Нулевой вектор] $\exists 0_V\in V:~x=x+0_V=0_V+x,~\forall x\in V$
+\item[Обратный элемент] $\forall x\in V~\exists$ ``$-x$'' $\in V:~x+$``$-x$''$=0_V$
+\item[Совместимость] $\alpha (\beta x)=(\alpha\beta)x,~\forall \alpha,\beta\in K,~x\in V$
+\item[Унитарность] Если $1_k\in K$ -- единица поля $K$, то $1_K\cdot x=x,~\forall x\in V$.
+\item[Дистрибутивность] $\forall \alpha,\beta\in K,~x,y\in V$ \\
+$(\alpha+\beta)x=\alpha x+\beta x,~~\alpha(x+y)=\alpha x+\alpha y$
+\end{labeling}
+\end{definition_ru}
+\end{frame}
+
+\begin{frame}{Линейные пространства}
+\underline{Линейной комбинацией} векторов $x_1,\ldots, x_n$ в пространстве $V$ над $K$ называется вектор $v$, для которого выполняется 
+$$
+v=\sum_{i=1}^n\alpha_i x_i,
+$$
+где $\alpha_i\in K$, таким образом $v\in V$. Если при этом $\exists i:~\alpha_i\neq 0$, то такая комбинация называется \underline{нетривиальной}\\
+\pause
+\vspace{1em}
+Множество всех линейных комбинаций векторов $x_1,\ldots, x_n$ принято обозначать $\lin\{x_1, \ldots, x_n\}$, $\llin\{x_1, \ldots, x_n\}$ или $\langle x_1, \ldots, x_n\rangle$ и называть \underline{линейной оболочкой}.\\
+\vspace{1em}
+\pause
+Векторы $x_1, \ldots, x_n$ называются \underline{линейно независимыми}, если любая их нетривиальная линейная комбинация отлична от нулевого элемента $V$.\\
+\vspace{1em}
+\pause
+\underline{Размерностью пространства} $V$ называется максимальное натуральное число $n$ такое, что существуют $n$ линейно независимых векторов. Если такого $n$ не существует, то $V$ имеет размерность $\infty$.
+\end{frame}
+
+
+\begin{frame}{Линейные пространства}
+\underline{Базисом} пространства $V$ называется любой набор линейно независимых векторов такой, что линейная оболочка этого набора совпадает с $V$.\\
+\pause
+\textit{Замечание.} Если пространство конечномерное, то размер базиса всегда равен размерности пространства.\\
+\pause
+\vspace{1em}
+Если $b_1, \ldots, b_n$ -- некоторый базис $V$, то любой вектор $x\in V$ представляется единственным образом в виде линейной комбинации векторов базиса (единственность: если есть два различных представления, то их разность -- нетривиальная нулевая линейная комбинация векторов базиса) 
+$$
+v=\alpha_1x_1+\ldots+\alpha_nx_n.
+$$
+Таким образом, любому вектору можно однозначно сопоставить запись $(\alpha_1, \ldots, \alpha_n)$ -- стандартный способ записи векторов для простых пространств.
+\end{frame}
+
+\begin{frame}{Пространство $K^n$}
+Одно из наиболее стандартных линейных пространств $K^n$ над $K$ -- это множество упорядоченных кортежей (один кортеж состоит из $n$ элементов поля $K$) с покоординатными операциями:
+\begin{align*}
+&\alpha_1, \ldots, \alpha_n\in K\Rightarrow (\alpha_1, \ldots, \alpha_n)\in K^n\\
+&(\alpha_1, \ldots, \alpha_n)+(\beta_1, \ldots, \beta_n)=(\alpha_1+\beta_1, \ldots, \alpha_n+\beta_n)\\
+&\beta\cdot(\alpha_1, \ldots, \alpha_n)=(\beta\alpha_1, \ldots, \beta\alpha_n)
+\end{align*}
+\pause
+Векторы 
+\begin{align*}
+&(1, 0, \ldots, 0, 0),\\
+&(0, 1, \ldots, 0, 0),\\
+&\vdots\\
+&(0, 0, \ldots, 1, 0),\\
+&(0, 0, \ldots, 0, 1)\\
+\end{align*}
+образуют естественный базис $K^n$, эти вектора принято обозначать $e_n^1, e_n^2 \ldots, e_n^n$ соответственно.
+\end{frame}
+
+\begin{frame}{Прочие примеры}
+\begin{itemize}[<+->]
+\item Пространство многочленов одной или нескольких переменных над $\mathbb{R}$ или $\mathbb{C}$, бесконечная размерность. Линейная оболочка $1, x, x^2$ -- множество всех многочленов степени не больше $2$.
+\item $C([a, b])$ -- множество непрерывных функций из $[a, b]$ в $\mathbb{R}$, бесконечная размерность.
+\item Множество операторов над функциями: элементы множества -- функции вида $g:С([a,b])\rightarrow C([a,b])$. Наиболее часто используемые -- операторы дифференцирования и интегрирования
+$$
+\frac{d}{dx},~~\int_a^x
+$$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Матрицы}
+\underline{Матрицей} размером $n\times m$ над полем $K$ называется 
+$$
+A=\left(
+\begin{array}{ccc}
+a_{11} & \ldots & a_{1m} \\
+\vdots & \ddots & \vdots \\
+a_{n1} & \ldots & a_{nm}
+\end{array}
+\right)
+$$
+где $a_{ij}\in K$. Множество всех матриц размера $n\times m$ будем обозначать как $K^{n\times m}$ \\
+\vspace{1em}
+\pause
+Матрицы образуют линейное пространства над $K$:
+$$
+\left(
+\begin{array}{ccc}
+a_{11} & \ldots & a_{1m} \\
+\vdots & \ddots & \vdots \\
+a_{n1} & \ldots & a_{nm}
+\end{array}
+\right)
++
+\left(
+\begin{array}{ccc}
+b_{11} & \ldots & b_{1m} \\
+\vdots & \ddots & \vdots \\
+b_{n1} & \ldots & b_{nm}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+a_{11}+b_{11} & \ldots & a_{1m}+b_{1m} \\
+\vdots & \ddots & \vdots \\
+a_{n1}+b_{n1} & \ldots & a_{nm}+b_{nm}
+\end{array}
+\right)
+$$
+$$
+\alpha \left(
+\begin{array}{ccc}
+a_{11} & \ldots & a_{1m} \\
+\vdots & \ddots & \vdots \\
+a_{n1} & \ldots & a_{nm}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+\alpha a_{11} & \ldots & \alpha a_{1m} \\
+\vdots & \ddots & \vdots \\
+\alpha a_{n1} & \ldots & \alpha a_{nm}
+\end{array}
+\right)
+$$
+\end{frame}
+
+
+\begin{frame}{Матричное умножение}
+Пусть $A=(a_{ij})\in K^{n\times m}$, $B=(b_{ij})\in K^{m\times q}$, тогда произведением матриц $A$ и $B$ называется следующая матрица $C=(c_{ij})\in K^{n\times q}$, которая задается соотношениями
+$$
+c_{ik}=\sum_{j=1}^ma_{ij}b_{jk}
+$$
+\pause
+В случае, если одна из размерностей матрицы равна единице, то определение матрицы идентично определению вектора. Матрицу из $K^{1\times n}$ принято называть вектор-строкой, а матрицу из $K^{n\times 1}$ принято называть вектор-столбцом. Элементы $K^n$ обычно отождествляются с соответствующими вектор-столбцами.\\
+\pause
+\vspace{1em}
+Важно отметить, что матричное умножение ассоциативно ($A(BC)=(AB)C$), дистрибутивно ($A(B+C)=AB+AC$), но не коммутативно ($AB\neq BA$). 
+\end{frame}
+
+
+\begin{frame}{Транспонирование матриц}
+Пусть $A=(a_{ij})\in K^{n\times m}$, \underline{транспонированной} матрицей $A$ называется матрица $B=(b_{ij})\in K^{m\times n}$, которая задается соотношениями
+$$
+b_{ij}=a_{ji}.
+$$
+Такую матрицу принять обозначать $A^T$.\\
+\vspace{1em}
+\pause
+Матрица $A\in K^{n\times n}$ называется \underline{симметричной} если выполняется
+$$
+A=A^T
+$$
+\pause
+Основные свойства:
+\begin{align*}
+&(A+B)^T=A^T+B^T\\
+&(AB)^T=B^TA^T\\
+&(A^T)^T=A
+\end{align*}
+\end{frame}
+
+\begin{frame}{Диагональная и тождественная матрицы}
+Существуют \textit{единичные} или \textit{тождественные} матрицы $I_n\in K^{n\times n}$ (или просто $I$, если размер очевиден из контекста) такие, что для любой матрицы $A\in K^{n\times m}$ выполняется $A=I_nA=AI_m$:
+$$
+I_n=\left(\begin{array}{ccccc}
+1 & 0 & \ldots & 0 \\
+0 & 1 & \ldots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \ldots & 1
+\end{array}
+\right)
+$$
+\pause
+Диагональная матрица -- обозначается $\diag\{d_1, d_2 \ldots, d_n\}$ и имеет вид
+$$
+\left(\begin{array}{ccccc}
+d_1 & 0 & \ldots & 0 \\
+0 & d_2 & \ldots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \ldots & d_n
+\end{array}
+\right)
+$$
+\end{frame}
+
+\begin{frame}{Скалярное произведение}
+
+\begin{definition_ru}
+Пусть $V$ -- линейное пространство над $\mathbb{R}$ (или $\mathbb{C}$). \underline{Скалярным произведением} на $V$ называется функция $\langle\cdot, \cdot\rangle:V\times V\rightarrow \mathbb{R}$(или $\mathbb{C}$), обладающей следующими свойствами
+\begin{enumerate}
+\item Симметричность
+$$
+\langle x,y\rangle=\overline{\langle y,x\rangle}, x,y\in V,
+$$
+где $\overline{y}$ -- комплексное сопряжение $y$.
+\item Линейность
+\begin{align*}
+&\langle\alpha x,y\rangle=\alpha\langle x, y\rangle, ~x,y\in V, \\
+&\langle x+z,y\rangle=\langle x, y\rangle + \langle z, y\rangle,~x,y,z\in V.
+\end{align*}
+\item Положительная определенность, $\langle x, x\rangle\in \mathbb{R}$ и
+\begin{align*}
+&\langle x, x\rangle\in \mathbb{R}\geq 0\\
+&\langle x, x\rangle\in \mathbb{R}=0\Leftrightarrow x=0.
+\end{align*}
+
+\end{enumerate}
+\end{definition_ru}
+\end{frame}
+
+
+\begin{frame}{Стандартное скалярное произведение и ортогональность}
+Для $\mathbb{R}^n$ стандартным скалярным произведением является следующая функция
+$$
+\langle u, v\rangle=u^Tv=v^Tu=\sum_{i=1}^nu_iv_i
+$$
+\pause
+Для $\mathbb{C}^n$ вместо обычного транспонирования используется \underline{эрмитово транспонирование}:
+$$
+\langle u, v\rangle=v^\dagger u=\overline{u^\dagger v}=\sum_{i=1}^n u_i\overline{v_i}
+$$
+\pause
+Два вектора $u,v$ называются ортогональными относительно $\langle \cdot, \cdot \rangle$ если
+$$
+\langle u, v \rangle=0
+$$
+\end{frame}
+
+\begin{frame}{Ортогонализация Грамма-Шмидта}
+Следующую процедуру принято называть \underline{ортогонализацией Грамма-Шмидта}:
+\begin{description}
+\item[Входные данные] Семейство линейно независимых векторов $x_1, \ldots, x_n$.
+\item[Выходные данные] Семейство ортогональных векторов $y_1, \ldots, y_n$ таких, что $\lin\{x_1, \ldots, x_n\}=\lin\{y_1, \ldots, y_n\}$.
+\item[Итерация $k=1..n$]
+$$
+y_k\leftarrow x_k-\sum_{i=1}^{k-1}\frac{\langle x_k, y_i\rangle}{\langle y_i, y_i\rangle} y_i
+$$
+\end{description}
+\pause
+\textbf{Ортогональность:} Индукция, при $k=1$ очевидным образом семейство $y_1, \ldots, y_k$ состоит из ортогональных векторов. Пусть $y_1, \ldots, y_{k-1}$ -- ортогональны, тогда при $i<k$
+$$
+\langle y_k, y_i\rangle = \langle x_k, y_i\rangle-\sum_{j=1}^{k-1}\frac{\langle x_k, y_j\rangle}{\langle y_j, y_j\rangle}\underbrace{\langle y_j, y_i\rangle}_{i\neq j\Rightarrow =0}=\langle x_k, y_i\rangle - \frac{\langle x_k, y_i\rangle}{\langle y_i, y_i\rangle}\langle y_i, y_i\rangle=0
+$$
+\end{frame}
+
+\begin{frame}{Ортогонализация Грамма-Шмидта}
+\textbf{Равенство линейных оболочек}: докажем по индукции, что $\lin\{x_1, \ldots, x_k\}=\lin\{y_1, \ldots, y_k\}$. Очевидно, это выполняется при $k=1$. По построению
+$$
+x_k=y_k+\sum_{i=1}^{k-1}\frac{\langle x_k, y_i\rangle}{\langle y_i, y_i\rangle} y_i,
+$$
+а значит $\lin\{x_1, \ldots, x_k\}\subset \lin\{y_1, \ldots, y_k\}$. \pause Далее, покажем по индукции обратное вложение: из индукционного предположения ($\lin\{x_1, \ldots, x_{k-1}\}= \lin\{y_1, \ldots, y_{k-1}\}$) существуют $\alpha_1, \ldots, \alpha_{k-1}$ такие, что
+$$
+\sum_{i=1}^{k-1}\frac{\langle x_k, y_i\rangle}{\langle y_i, y_i\rangle} y_i=\sum_{i=1}^{k-1}\alpha_i x_i.
+$$
+\pause
+Таким образом 
+$$
+y_k=x_k-\sum_{i=1}^{k-1}\alpha_i x_i,
+$$
+что дает $\lin\{x_1, \ldots, x_k\}\supset \lin\{y_1, \ldots, y_k\}$
+\end{frame}
+
+\begin{frame}{Определитель и обратимость матриц}
+Пусть $A=(a_{ij})$ -- $n\times n$ матрица над $K$, величина
+$$
+\det A = |A|:=\sum_{p\in S_n}(-1)^{Inv(p)}a_{ip_i}\in K
+$$
+называется \underline{определителем} (или детерминантом) матрицы $A$. Основные свойства:
+\begin{itemize}
+\item[1.] Пусть $A=(A_1, \ldots, A_n)$, $A_i$ столбцы матрицы $A$. Определитель не меняется при замене одного столбца следующим образом
+$$
+A_i\rightarrow A_i+\alpha A_j.
+$$
+\item[2.] $\det A\neq 0$ $\Leftrightarrow$ Существует матрица $B$ такая, что $AB=BA=I$. В этом случае говорят, что матрица $A$ \underline{обратима}, а $B$ -- \underline{обратная к} $A$ и обозначается $A^{-1}$.
+\item[3.] Прочие свойства
+\begin{align*}
+&\det A=\det A^T\\
+&\det AB=\det A\cdot \det B\\
+&\det I=1=\det AA^{-1}=\det A\cdot \det A^{-1}
+\end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Матричная запись СЛАУ}
+Рассмотрим систему линейных алгебраических уравнений (СЛАУ)
+$$
+\left\{
+\begin{array}{lllllll}
+a_{11} x_1 & + & \ldots & +&a_{1m}x_m&=&b_1\\
+\vdots & + & \ddots & + &\vdots&=&\vdots\\
+a_{n1}x_1& + & \ldots & +&a_{nm}x_m&=&b_n\\
+\end{array}
+\right.
+$$
+\pause
+Пусть $A=(a_{ij})\in K^{n\times m}$, $x=(x_1, \ldots, x_m)\in K^m$, $b=(b_1, \ldots, b_n)\in K^n$. Слева в системе записаны координаты вектора $Ax$, справа -- вектора $b$, таким образом систему можно компактно записать в виде
+$$
+Ax=b,
+$$
+что обычно называют матричной формой записи СЛАУ.\\
+\vspace{1em}
+\pause
+Если $n=m$, а матрица $A$ обратима, то решение системы всегда единственно и задается
+$$
+x=A^{-1}b
+$$ 
+
+\end{frame}
+
+
+\begin{frame}{Линейные функции}
+Пусть $V, W$ -- линейные пространства над $K$, функция $f:V\rightarrow W$ называется \underline{линейной}, если 
+\begin{align*}
+&f(\alpha x)=\alpha f(x),~\forall x\in V, \alpha\in K\\
+&f(x+y)=f(x)+f(y),~\forall x,y\in V
+\end{align*}
+\pause
+Пусть $A\in K^{m\times n}$, $f:K^n\rightarrow K^m$ :
+$$
+f(x)=Ax,
+$$
+то $f$ -- линейна. \\
+\pause
+Оказывается, любая линейная функция имеет такое представление
+\begin{theorem_ru}
+Пусть $f:K^n\rightarrow K^m$ -- линейная функция, тогда существует $A\in K^{m\times n}$ такая, что 
+$$
+f(x)=Ax
+$$
+\end{theorem_ru}
+
+\end{frame}
+
+\begin{frame}{Матричное представление линейной функции}
+\textbf{Док-во.} Рассмотрим стандартный базис $K^n: e^1_n, e_n^2, \ldots, e_n^n$. Из свойств линейности $f$ однозначно задается значениями $f(e^1_n),\ldots, f(e^n_n)$: для любого вектора $x=(x_1, \ldots, x_n)\in K^n$ имеет место соотношение $x=\sum_{i=1}^nx_ie_n^i$. В силу линейности $f$ получаем
+$$
+f(x)=\sum_{i=1}^nx_if(e^i_n)
+$$
+\pause
+Для завершения доказательства осталось заметить, что в качестве матрицы $A$ нужно взять матрицу, столбцы которой составлены из $f(e^i_n)$:
+$$
+\sum_{i=1}^nx_if(e^i_n)=x_1\left[
+\begin{array}{c}
+f_1(e_n^1)\\
+\vdots\\
+f_m(e_n^1)
+\end{array}
+\right]+
+\ldots + x_n \left[
+\begin{array}{c}
+f_1(e_n^n)\\
+\vdots\\
+f_m(e_n^n)
+\end{array}
+\right]
+$$
+$$
+=\left(\begin{array}{ccc}
+f_1(e_n^1) & \ldots & f_1(e_n^n)\\
+\vdots, & \ddots & \vdots \\
+f_m(e_n^1) & \ldots & f_m(e_n^n)
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+x_1\\ \vdots \\ x_n
+\end{array}
+\right)~~~\blacksquare
+$$
+
+\end{frame}
+
+\begin{frame}{Изоморфность линейных пространств}
+Линейные пространства $V, W$ называются \underline{изоморфными}, если существует биективная линейная функция $f:V\rightarrow W$.\\
+\pause
+\vspace{1em}
+Неформально это означает, что все свойства линейных функций над $V$ есть и у линейных функций над $W$.\\
+\pause
+\begin{theorem_ru}
+Любое конечномерное пространство $V$ размерностью $n$ над $K$ изоморфно $K^n$
+\end{theorem_ru}
+\pause
+\textbf{Док-во.} Пусть $v_1, \ldots, v_n$ -- базис $V$, $A_v$ -- матрица, составленная из столбцов $v_1, \ldots, v_n$. Рассмотрим линейную функцию $f:K^n\rightarrow V$:
+$$
+f(e_n^i)=v_i.
+$$
+\pause
+Остальные значения $f$ однозначно определяются:
+$$
+f(x)=\sum_{i=1}^nv_ix_i=A_vx
+$$
+\end{frame}
+
+\begin{frame}{Изоморфность линейных пространств}
+Пусть для некоторых $x, y$ $f(x)=f(y)$, т.е. $A_vx=A_vy\Leftrightarrow A_v(x-y)=0$, т.е. линейная комбинация $v_i$ с коэффициентами $x_i-y_i$ равно нулю. Из определения базиса следует, что это возможно только если $x_i-y_i=0$, т.е. $x=y$, а значит $f$ инъективно.\\
+\pause
+\vspace{1em}
+Проверим сюрьектвиность. Пусть $z\in V$ имеет следующее разложение по базису $v$:
+$$
+z=\sum_{i=1}^nx_iv_i.
+$$
+\pause
+Тогда по определению $f$ при $x=(x_1, \ldots, x_n)$ $f(x)=z$.~~~$\blacksquare$
+\end{frame}
+
+
+\begin{frame}{Некоторые замечания}
+\textit{Замечание} 1. Вектор-строку размера $1\times n$ можно умножать слева на матрицу размера $n\times m$, а вектор-столбец размера $1\times n$ можно умножать справа на матрицу размера $m\times n$. Обычно если имеет место одно умножение матрицы на вектор, то матрица ставится слева, поэтому принято, что по умолчания все вектора -- это вектор-столбцы.\\
+\pause
+\vspace{1em}
+\textit{Замечание} 2. При описании векторов зачастую используется обозначение $x=(x_1, \ldots, x_n)$. Иначе говоря буква вектора с нижним индексом -- компонента вектора. Если нет необходимости непосредственной работы с индексами вектора, то нижний индекс может использоваться в других целях (номер в последовательности и~т.п.)
+\end{frame}
+
+\begin{frame}{Собственные числа}
+Пусть $A\in K^{n\times n}$ матрица. Число $\lambda$ называется \underline{собственных числом} матрицы $A$, если для некоторого $v\neq 0$ выполняется
+$$
+Av=\lambda v.
+$$
+Вектор $v$ в этом случае называется \underline{собственным вектором}.\\
+\vspace{1em}
+\pause
+Для диагональной матрицы $\diag\{d_1,\ldots, d_n\}$ собственные числа -- $d_1,\ldots, d_n$, которым соответствуют собственные вектора $e_n^1, \ldots, e_n^n$.
+\end{frame}
+
+\begin{frame}{Характеристический многочлен}
+Если система
+$$
+Ax=0
+$$
+имеет нетривиальное ($x\neq 0$) решение, то $Ax=b$ либо не имеет решений, либо имеет сразу несколько ($Ax=0,~Ay=b\Rightarrow A(y+\alpha x)=b$). Таким образом, если существует нетривиальное решение $Ax=0$, то $\det A=0$. Оказывается, что обратное также верно, т.е. если $\det A=0$, то существует нетривиальное решение $Ax=0$.\\
+\pause
+\vspace{1em}
+Если $\lambda$ -- c.ч. матрицы $A$, а $v$ -- соответствующий с.в., то
+$$
+Av=\lambda v\Leftrightarrow 0=Av-\lambda v=Av-\lambda Iv=(A-\lambda I)v\Rightarrow \det (A-\lambda I)=0.
+$$
+Величина $\det (A-\lambda I)$ -- многочлен степени $n$ по $\lambda$, который принято называть \underline{характеристическим} многочленом и обозначается $\chi_A(t)$. Его корни -- собственные числа $A$. Заметим, что для любой обратимой матрицы $P$
+$$
+\chi_A(t)=\det(A-tI)=\det P \det(A-tI) \det P^{-1}=
+\det(PAP^{-1}-tI)=\chi_{PAP^{-1}}(t)
+$$
+\end{frame}
+
+\begin{frame}{Собственное подпространство}
+Заметим, что собственные вектора, соответствующие одному и тому же собственному числу образуют линейное пространство:
+\begin{align*}
+&A(v+u)=Av+Au=\lambda v +\lambda u=\lambda(v+u)\\
+&A(\alpha v)=\alpha Av=\alpha\lambda v=\lambda(\alpha v)
+\end{align*}
+Это подпространство принято называть \underline{собственным подпространством} $V$, соответствующем с.ч. $\lambda$ матрицы $A$.\\
+\pause
+Если $Av=\lambda v$, $A^Tu=\mu u$, то
+\begin{align*}
+u^TAv=u^T(\lambda v)=&\lambda u^Tv\\
+u^TAv=(\mu u^T)v=&\mu u^Tv
+\end{align*}
+Таким образом, если $\mu\neq \lambda$, то векторы $u, v$ ортогональны.
+\end{frame}
+
+\begin{frame}{Диагонализируемые матрицы}
+Матрица $A$ называется \underline{диагонализируемой} если существует такая обратимая матрица $P$, что матрица $D=P^{-1}AP$ диагональна.\\
+\pause
+\vspace{1em}
+То же самое, но с другой стороны: $A$ представляется в виде $A=PDP^{-1}$, где $D$ -- диагональная матрица.\\
+\pause
+\vspace{1em}
+Если такое представление существует, то $D$ из собственных чисел $A$:
+$$
+d_ie_n^i=De_n^i=P^{-1}APe_n^i~\Rightarrow~d_i(Pe_n^i)=A(Pe_n^i)
+$$
+\pause
+\textit{Геометрический смысл}: в случае возможности диагонализации из собственных векторов $A$ можно составить базис $K^n$. Столбцы матрицы $P$ в этом случае составлены из этого базиса, обозначим их $v_1, \ldots, v_n$, а соответствующие им собственные числа -- $\lambda_1, \ldots, \lambda_n$. Преобразование $x\rightarrow Ax$ растягивает $x$ на $\lambda_1$ по направлению $v_1$, $\lambda_2$ по направлению $v_2$, $\ldots$ $\lambda_n$ по направлению $v_n$. \\
+\end{frame}
+
+\begin{frame}{Вещественные симметричные матрицы}
+Для любой вещественной симметричной матрицы $A$ выполняется\\
+\pause
+1) $A$ имеет только вещественные собственные числа: пусть $Av=\lambda v$, $v\neq 0$, $\overline{a}$ -- комплексное сопряжение $a$ (для матриц и векторов -- покомпонентное), тогда
+$$
+\overline{v}^TAv=\overline{v}^T(\lambda v)=\lambda \overline{v}^Tv
+$$
+По свойствам комплексного сопряжения $\overline{\lambda}\overline{v}=\overline{A}\overline{v}=A\overline{v}$. Из симметричности $A$: $\overline{\lambda}\overline{v}^T=(A\overline{v})^T=\overline{v}^TA^T=\overline{v}^TA$. Таким образом 
+$$
+\overline{v}^TAv=\overline{\lambda}\overline{v}^Tv.
+$$
+Итого: $(\lambda-\overline{\lambda})\overline{v}^Tv=0$. Так как $v\neq 0$, по свойствам комплексного сопряжения $\overline{v}^Tv>0$, а значит $\overline{\lambda}=\lambda$.\\
+\pause
+\vspace{1em}
+\textit{Замечание}. Так как все с.ч. вещественны, то 
+$$
+\chi_A(t)=\prod_{i=1}^n(\lambda_i-t)
+$$
+\end{frame}
+
+\begin{frame}{Вещественные симметричные матрицы}
+2) Если с.ч. $\lambda$ имеет кратность $k$ (кратность в качестве корня характеристического многочлена), то всегда найдутся $k$ попарно ортоганальных собственных векторов, соответствующих $\lambda$. пусть $\chi_A(t)=(\lambda-t)^kP(t)$, $Av=\lambda v$, $v^Tv=1$. Вектор $v$ может быть дополнен до ортогонального базиса $v, y_2, \ldots, y_n$, обозначим 
+$$
+Y=[y_2~y_3~\ldots~y_n],~B=[v~Y].
+$$
+\pause
+Тогда $B^{-1}=B^T$,
+$$
+B^TAB=
+\left[
+\begin{array}{cc}
+v^TAv & v^TAY\\
+Y^TAv & Y^TAY
+\end{array}
+\right]
+=
+\left[
+\begin{array}{cc}
+\lambda & \lambda v^TY\\
+\lambda Y^Tv & Y^TAY
+\end{array}
+\right]
+=
+\left[
+\begin{array}{cc}
+\lambda & 0\\
+0 & Y^TAY
+\end{array}
+\right].
+$$
+Таким образом 
+$$
+(\lambda-t)^kP(t)=\chi_A(t)=(\lambda-t)\chi_Y(t),
+$$
+т.е. $\chi_Y(t)=(\lambda-t)^{k-1}P(t)$, а значит $\lambda$ -- с.ч. $Y$, повторив $k$ раз получаем искомые векторы.\\
+\pause
+\textit{Замечание.} Важным следствием является диагонализируемость $A$.
+
+
+\end{frame}
+
+\begin{frame}{Жорданова форма}
+Не любая матрица допускает диагонализацию, однако для любой матрицы существует \underline{жорданова форма} $A=P^{-1}JP$, где
+$$
+J=\left(
+\begin{array}{cccc}
+J_1 & 0 & \ldots & 0\\
+0 & J_2 & \ldots & 0\\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \ldots & J_k
+\end{array}
+\right)
+$$
+а $J_i$ -- так называемый жорданов блок и имеет вид
+$$
+J_i=\left(
+\begin{array}{ccccc}
+\lambda_i & 1 & \ldots & 0 & 0\\
+0 & \lambda_i & \ldots & 0 & 0\\
+\vdots & \vdots & \ddots & \vdots & \vdots \\
+0 & 0 & \ldots & \lambda_i & 1\\
+0 & 0 & \ldots & 0 & \lambda_i
+\end{array}
+\right)
+$$
+\end{frame}
+
+\begin{frame}{Квадратичные формы}
+\underline{Квадратичной формой} в $K^n$ называется выражение
+$$
+\sum_{i=1}^n\sum_{j=1}^n a_{ij}x_ix_j+\sum_{i=1}^nb_ix_i+c,
+$$
+где $a_{ij}, x_i, b_i, c\in K$. Форма называется \underline{однородной} если $b_i=c=0$. Если обозначить $A=(a_{ij})$, $b=(b_1, \ldots, b_n)$, то форму можно записать в виде
+$$
+x^TAx+x^Tb+c
+$$
+\pause
+Отметим, что форма не однозначно задается в таком виде: любая матрица $D=(d_{ij})$, для которой $d_{ij}+d_{ji}=a_{ij}+a_{ji}$ может быть использована вместо $A$ в указанном представлении. Однако, среди таких матриц симметричной является единственная матрица
+$$
+\frac{1}{2}(A+A^T)
+$$
+\end{frame}
+
+\begin{frame}{Положительная определенность}
+Матрица $A$ называется \underline{положительно определенной}, если для любого ненулевого вектора $x$ выполняется
+$$
+x^TAx>0.
+$$
+\pause
+Если же вместо строгого неравенства имеет место нестрогое, то $A$ называется \underline{положительно полуопределенной}.\\
+\pause
+\vspace{1em}
+Положительная определенность естественным образом задает частичный порядок ``$\preceq$'' на матрицах $n\times n$: $A\preceq B$ если $B-A$ положительно полуопределена и $A\prec B$ если $B-A$ положительно определена.
+\end{frame}
+
+\begin{frame}{Основная характеристика положительной определенности}
+Заметим, что диагональная матрица $D=\diag\{d_1, \ldots, d_n\}$ положительна определена тогда и только тогда, когда её диагональные элементы строго положительны
+$$
+x^TDx=\sum_{i=1}^nd_ix^2_i>0~\forall x\neq 0~\Leftrightarrow~d_i>0~1\leq i\leq n
+$$
+\pause
+Следовательно диагонализируемая матрица положительно определена тогда и только тогда, когда все её собственные числа строго положительны:
+$$
+x^TAx=(x^TP^{-1})D(Px)
+$$
+Используя обратимость $P$ получаем, что любой вектор $y$ может быть представлен в виде $y=Px$.\\
+\pause
+Таким образом, матрица $A$ положительно определена тогда и только тогда когда все собственные числа
+$$
+\frac{1}{2}(A+A^T)
+$$
+положительны.
+
+\end{frame}
+
+\end{document}

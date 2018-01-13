@@ -1,0 +1,284 @@
+\documentclass[10pt, handout]{beamer}
+\usetheme{Madrid}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage[OT1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\author{Мальковский Н.~В.}
+\title[Стохастические задачи]{Стохастические задачи оптимизации}
+%\setbeamercovered{transparent} 
+\setbeamertemplate{navigation symbols}{} 
+%\logo{} 
+\institute[СПбАУ]{Санкт-Петербургский академический университет}
+\date{} 
+%\subject{} 
+\usecolortheme{beaver}
+
+
+\DeclareMathOperator{\argmin}{argmin}
+\DeclareMathOperator{\interior}{Int}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\lin}{Span}
+
+%\setbeamertemplate{theorems}[numbered]
+
+\newcounter{thm}
+\newcounter{lm}
+\newcounter{def}
+
+
+\newtheorem{theorem_ru}[thm]{Теорема}
+\newtheorem{lemma_ru}[lm]{Лемма}
+\newtheorem{corollary_ru}{Следствие}[]
+\newtheorem{definition_ru}{Определение}[def]
+
+\graphicspath{{image/}}
+\newcommand{\Ima}{\text{Im}}
+\newcounter{remarknumber}[framenumber]
+\newcommand{\remark}{\stepcounter{remarknumber}\textit{Замечание}~\arabic{remarknumber}}
+
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\centering
+\includegraphics[width=.23\textwidth]{logo.png}
+\end{frame}
+
+\begin{frame}{Проблема традиционных задач}
+Математическая постановка задач оптимизации подразумевает возможность \textbf{точно} измерять
+\pause
+\begin{itemize}[<+->]
+\item Значения целевой функции $f$ в любых точках множества $\mathcal{D}$.
+\item Значения градиента целевой функции $f$.
+\item Значения гессиана целевой функции $f$.
+\end{itemize}
+\pause
+Что делать, если можно померить только значения функции $f$?\\
+\vspace{1em}
+Что делать, если можно померить только неточные значения функции $f$?
+\end{frame}
+
+\begin{frame}{Стохастический градиент}
+\begin{definition_ru}
+\underline{Стохастическим градиентом} выпуклой функции $f:\mathcal{D}\subset\mathbb{R}^n\rightarrow \mathbb{R}$ в точке $x\in \mathcal{D}$ называется 
+случайная величина $g:\Omega\rightarrow \mathbb{R}^n$ такая, что
+$$
+Eg=\int_\Omega g~dp(g)= \nabla f(x)
+$$
+\end{definition_ru}
+
+\end{frame}
+
+\begin{frame}{Стохастический градиентный спуск}
+Пусть $\alpha_k>0$, $g_k$ -- стохастический градиент $f$ в точке $x_k$, \underline{стохастическим градиентным спуском} называется следующая процедура
+\begin{equation}\label{stochastic_gradient_descent}
+x_{k+1}=x_k-\alpha_kg_k
+\end{equation}
+
+\end{frame}
+
+\begin{frame}{Сходимость градиентного спуска при $\alpha_k=\mathcal{O}(1/k)$}
+\textit{Замечание} 3. Если $f$ сильно выпукла, а $\alpha_k=\mathcal{O}(\frac{1}{k})$, то $x_k$ сходится к $x^*$ со скоростью $\mathcal{O}\left(\frac{1}{\sqrt{k}}\right)$.\\
+\pause
+\begin{lemma_ru}
+Если при $\beta>1$ для числовой последовательности $\alpha_k$ выполняется $\alpha_k\geq 0$ и 
+$$
+\alpha_{k+1}\leq \alpha_k\left(1-\frac{\beta}{k+1}\right)+\frac{\gamma}{(k+1)^2},
+$$
+то при $D=\max\left\{\frac{\gamma}{\beta - 1}, \alpha_0\right\}$ выполняется
+$$
+\alpha_k\leq \frac{D}{k+1}.
+$$
+\end{lemma_ru}
+\end{frame}
+
+\begin{frame}{Сходимость градиентного спуска}
+\textbf{Док-во.} Докажем по индукции: очевидным образом база верна. Предположим, что утверждение верно для $k$, выведем верность для $k+1$:
+\begin{align*}
+\alpha_{k+1}&\leq \alpha_k\left(1-\frac{\beta}{k+1}\right)+\frac{\gamma}{(k+1)^2}\leq \frac{D}{k+1}\left(1-\frac{\beta}{k+1}\right)+\frac{\gamma}{(k+1)^2}\\
+&=\frac{D(k+1-\beta)(k+2)+\gamma(k+2)}{(k+1)^2(k+2)}\\
+&=\underbrace{\frac{-D+(k+2)(D(1-\beta)+\gamma)}{(k+1)^2(k+2)}}_{<0}+\frac{D}{k+2}\leq \frac{D}{k+2}.~\blacksquare
+\end{align*}
+\pause
+Возвращаясь к градиентному спуску, если функция $f$ сильно выпукла с константой $m$, а градиент липшицев с константой $M$, то
+\begin{align*}
+||x_{k+1}-x^*||^2&=||x_k-x^*||^2-2\alpha_k\nabla f(x_k)^T(x_k-x^*)+\alpha_k^2||\nabla f(x_k)||^2\\
+&\leq \left(1-2m\alpha_k\right)||x_k-x^*||^2+\alpha_k^2M^2.
+\end{align*}
+\pause
+Из Доказанной леммы следует, что $||x_k-x^*||=\mathcal{O}\left(\frac{1}{\sqrt{k}}\right)$ при $\alpha_k= \frac{\alpha}{k+1}>\frac{1}{2m(k+1)}$. 
+\end{frame}
+
+
+\begin{frame}{Общий анализ сходимости}
+\begin{theorem_ru}
+Пусть $f$ сильно выпукла с константой $m$, $\alpha_k=\frac{\beta}{k+1}$, $\beta>\frac{1}{2m}$, $g_k$ -- стохастический градиент $f$ в точке $x_k$, 
+$||g_k||\leq M$, тогда последовательность \eqref{stochastic_gradient_descent} сходится в среднеквадратичном смысле, и при этом выполняется оценка
+$$
+E||x_k-x^*||^2\leq \max\left\{\frac{\beta^2M^2}{2\beta m-1}, ||x_0-x^*||^2\right\}\frac{1}{k+1}
+$$
+\end{theorem_ru}
+\pause
+\textbf{Док-во.}
+\begin{align*}
+E\{||x_{k+1}-x^*||^2~|~x_k\}&=||x_k-x^*||^2-2\alpha_kE\{g_k\}^T(x_k-x^*)+\alpha_k^2E||g_k||^2\\
+&=||x_k-x^*||^2-2\frac{\beta}{k+1}\nabla f(x_k)^T(x_k-x^*)+\frac{E\{||g_k||^2\}\beta^2}{(k+1)^2}\\
+&\leq \left(1-\frac{2m\beta}{k+1}\right)||x_k-x^*||^2+\frac{M^2\beta^2}{(k+1)^2}
+\end{align*}
+\pause
+Используя индукцию это неравенство дает утверждение теоремы (см. лекцию о градиентном спуске).~~$\blacksquare$
+\end{frame}
+
+\begin{frame}{Замечания}
+В общем случае скорость сходимости порядка $\mathcal{O}(1/\sqrt{k})$ оптимальна: пусть $f(x)=E(x-\omega)^2$, где $\omega$ -- некоторая случайная величина.
+В силу 
+\begin{align*}
+\nabla f(x)&=\nabla \int_\Omega(x-\omega)^2dp(\omega)=\int_\Omega\nabla[(x-\omega)^2]dp(\omega)\\
+&=\int_\Omega 2(x-\omega)dp(\omega)=2(x-E\omega)
+\end{align*}
+получаем, что $E\omega$ есть точка минимума $f$.
+\end{frame}
+
+\begin{frame}{Метод покоординатного спуска}
+\begin{theorem_ru}
+Пусть $f$ дважды дифференцируема, $\delta_{ij}$ -- символ Кронекера,
+$$
+\Delta_i=\left(\delta_{i1}\frac{\partial f}{\partial x_1}, \ldots, \delta_{ij}\frac{\partial f}{\partial x_j}, \dots, 
+\delta_{in}\frac{\partial f}{\partial x_n}\right)^T,
+$$
+$g_k$ принимает значение $\Delta_i$ с вероятностью $p_i$, $D=\diag\{p_1, \ldots, p_n\}$, для некоторых констант $0<m<M$ выполняется
+$$
+mI\preceq D\nabla^2 f(\cdot)\preceq MI
+$$
+тогда при $\alpha_k\equiv \alpha$, $0<\alpha\leq \frac{2}{M+m}$ последовательность \eqref{stochastic_gradient_descent} сходится в среднеквадратичном смысле, и при этом выполняется оценка
+$$
+E||x_k-x^*||^2\leq \left(1-\alpha m\right)^k||x_0-x^*||^2
+$$
+\end{theorem_ru}
+\end{frame}
+
+\begin{frame}{Метод покоординатного спуска}
+\textbf{Док-во.} Пусть $D_i=\diag\{\delta_{1i}, \ldots, \delta_{ni}\}$, тогда $g_k=D_i\nabla f(x_k)$ с вероятностью $p_i$, $Eg_k=D\nabla f(x_k)$. 
+Обозначив $A_k=\int_0^1\nabla^2f(x^*+t(x_k-x^*))dt$ получаем
+$$
+x_{k+1}-x^*=x_k-x^*-\alpha g_k=x_k-x^*-\alpha D_i\nabla f(x_k)=(I-\alpha D_i A_k)(x_k-x^*)
+$$
+\pause
+Отметим, что $0\preceq I-\alpha D_i A_k\preceq I$, а при $0\preceq A\preceq I$ выполняется $A^TA\preceq A$ (unchecked!!!), таким образом
+\begin{align*}
+E||x_{k+1}-x^*||^2&=E(x_k-x^*)^T(I-\alpha D_i A_k)^T(I-\alpha D_i A_k)(x_k-x^*)\\
+&= (x_k-x^*)^TE\{(I-\alpha D_i A_k)^T(I-\alpha D_i A_k)\}(x_k-x^*)\\
+&\leq (x_k-x^*)^T E\{I-\alpha D_i A_k\}(x_k-x^*)\\
+&= (x_k-x^*)^T (I-\alpha D A_k)(x_k-x^*)\\
+&\leq (1-\alpha m)||x_k-x^*||^2
+\end{align*}
+Последнее неравенство справедливо в силу выбора $\alpha$. ~~$\blacksquare$
+\end{frame}
+
+\begin{frame}{Метод покоординатного спуска}
+\textit{Замечание} 1. Так как вероятности можно выбирать произвольно, целесообразно подбирать их так, чтобы минимизировать число обусловленности $M/m$.\\
+\vspace{1em}
+\pause
+\textit{Замечание} 2. Скорость сходимости покоординатного градиентного спуска соразмерна скорости сходимости обычного градиентного спуска, однако во многих
+задачах вычисление частных требует гораздо меньше вычислений, например для функций вида
+$$
+f(x)=\sum_{i=1}^ng_i(x_i)
+$$
+вычисление граиента всегда имеет стоимость последовательного вычисления всех частных производных.\\
+\end{frame}
+
+\begin{frame}{Рандомизированный метод случайного поиска}
+Пусть $\Delta_k\in \mathbb{R}^n$ -- ограниченная случайная величина, такая что
+\begin{align*}
+&E\Delta_k=0_n\\
+&E\Delta_k\Delta_k^T=I
+\end{align*}
+\pause
+Из формулы Тейлора получаем для некоторой точки $\xi_k$ на отрезке $[x, x+\beta\Delta_k]$
+$$
+E\{\Delta_k f(x+\beta\Delta_k)\}=E\Delta_k f(x)+\beta E\{\Delta_k\Delta_k^T\}\nabla f(x)+\frac{\beta^2}{2}E\{\Delta_k\Delta_k^T\nabla^2 f(\xi_k)\Delta_k\}
+$$
+\pause
+При ограниченности $\delta_k$ и $\nabla^2 f$ получаем
+$$
+E\{\Delta_k f(x+\beta\Delta_k)\}=\beta\nabla f(x)+\mathcal{O}(\beta^2)
+$$
+\end{frame}
+
+\begin{frame}{Рандомизированный метод случайного поиска}
+\underline{Рандомизированным алгоритмом случайного поиска} называется процедура, генерирующая последовательность оценок по правилу
+\begin{equation}\label{rand_descent}
+x_{k+1}=x_k-\alpha_kf(x_k+\beta\Delta_k),
+\end{equation}
+где $\alpha_k, \beta_k>0$ -- некоторые числовые последовательности, $\Delta_k$ -- последовательность независимых случайных величин, описанных ранее.
+\end{frame}
+
+\begin{frame}{Анализ сходимости}
+\begin{theorem_ru}
+Пусть $f$ -- дважды дифференцируемая функция, сильно выпуклая с константой $0<m$, $\nabla f(x)$ и $\nabla^2 f$ ограничены, $\alpha_k=\alpha>0$,
+$\beta>\frac{1}{2m\alpha}$, $\beta_k=\frac{\beta}{k+1}$, то последовательность, заданная \eqref{rand_descent}, сходится в среднеквадратичном смысле и при этом
+$$
+E||x_k-x^*||^2=\mathcal{O}(1/k)
+$$
+\end{theorem_ru}
+\pause
+\textbf{Док-во.} Обозначим $y_k=\Delta_k f(x_k+\beta_k \Delta_k)$. Из показанного ранее
+\begin{align*}
+E||x_{k+1}-x^*||^2&=||x_k-x^*||^2-2\alpha_kEy_k^T(x_k-x^*)+\alpha_k^2Ey_k^Ty_k\\
+&\leq ||x_k-x^*||^2-2\alpha_k\beta_k\nabla f(x_k)^T(x_k-x^*)\\
+&~~~-2\alpha_k(x_k-x^*)\mathcal{O}(\beta_k^2)+\alpha_k^2\mathcal{O}(\beta_k^2)\\
+&\leq (1-2\alpha_k\beta_k)||x_k-x^*||^2 + C\beta_k^2\alpha_k
+\end{align*}
+где $C$ -- некоторая положительная константа. Оставшаяся часть док-ва -- индукция (см. сходимость градиентного спуска).~~~ $\blacksquare$
+\end{frame}
+
+\begin{frame}{Замечания}
+\textit{Замечание} 1. Условия сильной выпуклости и ограниченности градиента одновременно выполнимы только на некотором ограниченном множестве. Данное доказательство
+использует то, что $||x_k-x^*||$ ограничено, что вообще говоря не так.\\
+\vspace{1em}
+\pause
+\textit{Замечание} 2. Шаг проекции может быть добавлен в этот алгоритм (по аналогии с проективным градиентным спуском) с сохранением результата. Это
+также избавляет от проблемы с $||x_k-x^*||$.\\
+\vspace{1em}
+\pause
+\textit{Замечание} 3. Варьирование параметра $\alpha_k$ также может быть использован для решения проблемы с $||x_k-x^*||$.
+\end{frame}
+
+\begin{frame}{Рандомизированная стохастическая аппроксимация}
+Рассмотрим задачу минимизации функционала среднего риска:
+$$
+f(x)=E_\omega F(x, \omega)=\int_\Omega F(x, \omega)~dp(\omega)\rightarrow min
+$$
+\pause
+На практике сложность таких задач заключается в возможности измерения $F(x, \omega)$ при известном $x$ и неизвестном случайном $\omega$.\\
+\pause
+\vspace{1em}
+По аналогии со случайным поиском, если $\Delta$ независимо с $\omega$, то
+$$
+E\Delta F(x+\beta\Delta, \omega)=E_\Delta\Delta f(x+\beta\Delta) = \beta\nabla f(x)+\mathcal{O}(\beta^2)
+$$
+\pause
+В дополнении, если измерению доступна величина $F(x+\beta\Delta, \omega)+\xi$, где $\xi$ -- погрешность измерения, то при условии незивисимости
+$\xi$ от $\Delta$ и ограниченности $\xi$ в силу $E\Delta=0$ также получаем
+$$
+E\Delta (F(x+\beta\Delta, \omega)+\xi)=E_\Delta\Delta f(x+\beta\Delta)+E_\Delta\Delta\xi = \beta\nabla f(x)+\mathcal{O}(\beta^2)
+$$
+
+\end{frame}
+
+\begin{frame}{Рандомизированная стохастическая аппроксимация}
+\underline{Рандомизированной стохастической аппроксимацией} называется алгоритм построения последовательности оценок по следующей схеме
+\begin{align}\label{rsa}
+&y_k=F(x_k+\beta\Delta_k, \omega)+\xi_k \nonumber\\
+&x_{k+1}=x_k-\alpha_k y_k
+\end{align}
+\pause 
+Как и в случае случайного поиска, при выборе $\beta_k=\mathcal{O}(1/k)$ мы получаем сходимость порядка $\mathcal{O}(1/k)$ для среднеквадратичного отклонения
+от точки минимума.
+\end{frame}
+\end{document}
