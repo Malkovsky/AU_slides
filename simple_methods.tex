@@ -81,21 +81,16 @@ $$
 \end{theorem_ru}
 \pause
 \textbf{Док-во}:
-Пусть $\nabla f(x_*)\neq 0_n$, $\epsilon>0$: $B(x, \epsilon)\subset \mathcal{D}$.\\
-В силу дифференцируемости $f$ в точке $x^*$
+Так как $x^*$ -- внутренняя точка $\mathcal{D}$, то существует $\delta>0$ такое, что $\overline{B}(x^*, \delta)\in \mathcal{D}$. Если $\nabla f(x^*)\neq 0$, то для
+$x=x^*-\frac{\delta}{2}\nabla f(x^*)$ выполняется $\nabla f(x^*)^T(x-x^*)=-\frac{\delta}{2}||\nabla f(x^*)||^2<0$, в силу дифференцируемости $f$ при достаточно малых $\alpha>0$ получаем
 $$
-f(x)=f(x^*)+\nabla f(x^*)(x-x^*)+\alpha(x-x^*)(x-x^*),
+f(x^*+\alpha (x-x^*))-f(x^*)=\alpha\nabla f(x^*)^T(x-x^*)+o(\alpha||x-x^*||)\leq
 $$
 $$
-\alpha(x)\rightarrow 0~(x\rightarrow 0).
-$$ 
+ \alpha \nabla f(x^*)^T(x-x^*)+\alpha ||x-x^*||\left(\frac{-\nabla f(x^*)^T(x-x^*)}{2||x-x^*||}\right)\leq \frac{\alpha}{2}\nabla f(x^*)^T(x-x^*)<0.
+$$
 \pause
-Пусть $x'=x^*-\delta \nabla f(x^*)\neq x^*$, $\delta>0$ достаточно малое, чтобы выполнялось $\alpha(x')\leq |\frac{\nabla f(x^*)}{2}|$ и $x'\in B(x^*, \epsilon)$, тогда
-$$
-f(x')=f(x^*)-\delta|\nabla f(x^*)|^2+\alpha(x')(x'-x^*)\leq
-f(x^*)-\frac{\delta}{2}|\nabla f(x^*)|^2< f(x^*).
-$$
-Т.е. $x^*$ не точка минимума. $\blacksquare$
+Таким образом мы получили $f(x^*+\alpha(x-x^*))<f(x^*)$, для противоречия достаточно лишь гарантировать, что $x^*+\alpha (x-x^*)\in\overline{B}(x^*, \delta)$, что выполняется при $\alpha=\frac{1}{||\nabla f(x^*)||}$.~~ $\blacksquare$ 
 \end{frame}
 
 \begin{frame}{Стационарность}
